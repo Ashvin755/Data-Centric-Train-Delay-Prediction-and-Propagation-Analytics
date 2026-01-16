@@ -5,15 +5,22 @@ BASE_URL = "https://api.railradar.in/api"
 ENDPOINT = "/v1/trains"
 
 
-def get_train_info(api_key: str, train_number: str) -> Dict[str, Any]:
+def get_train_info(api_key: str, train_number: str, journey_date: str = None, data_type: str = "full") -> Dict[str, Any]:
     url = f"{BASE_URL}{ENDPOINT}/{train_number}"
     headers = {
         "X-API-Key": api_key,
         "User-Agent": "RailRadar-Python-Client/1.0"
     }
+    
+    # Build query parameters
+    params = {}
+    if journey_date:
+        params["journeyDate"] = journey_date
+    if data_type:
+        params["dataType"] = data_type
 
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, params=params, timeout=10)
         response.raise_for_status()
         payload = response.json()
         print("\nRAW JSON RESPONSE:\n", payload)
@@ -101,7 +108,28 @@ def main():
 
         if choice == "1":
             train_number = input("Enter train number (e.g., 12951): ").strip()
-            data = get_train_info(api_key, train_number)
+            
+            # Optional: Journey Date
+            journey_date = input("Enter journey date (YYYY-MM-DD) [press Enter to auto-detect]: ").strip()
+            if not journey_date:
+                journey_date = None
+            
+            # Optional: Data Type
+            print("\nData Type Options:")
+            print("  1. full (default) - Complete data with static + live info")
+            print("  2. static - Only static schedule data")
+            print("  3. live - Only real-time tracking data")
+            data_type_choice = input("Select data type (1-3) [press Enter for full]: ").strip()
+            
+            data_type_map = {
+                "1": "full",
+                "2": "static",
+                "3": "live",
+                "": "full"
+            }
+            data_type = data_type_map.get(data_type_choice, "full")
+            
+            data = get_train_info(api_key, train_number, journey_date, data_type)
             print_train_info(data)
 
         elif choice == "2":
