@@ -156,53 +156,39 @@ flowchart TD
 ![Phase 2 - Ongoing Journey Diagram](p2_ongoing_journey.png)
 
 ```mermaid
-flowchart TD
-    Start([Phase 2 Begins]) --> FetchOngoing[Query journey_status_flags<br/>WHERE is_completed = false<br/>AND is_abandoned = false]
-    
-    FetchOngoing --> LoopJourneys{For Each<br/>Ongoing<br/>Journey}
-    
-    LoopJourneys --> GetDestination[Fetch destination_station_code<br/>FROM train_info<br/>WHERE train_no = X]
-    
-    GetDestination --> CallRailRadar2[Call RailRadar API<br/>trainNumber=X<br/>journeyDate=journey_date<br/>dataType=live]
-    
-    CallRailRadar2 --> APIError2{API<br/>Success?}
-    
-    APIError2 -->|No| IncrementFlag1[flag = flag + 1<br/>last_checked_at = now]
-    IncrementFlag1 --> CheckThreshold1{flag ><br/>MAX_FLAG<br/>?}
-    CheckThreshold1 -->|Yes| SetAbandoned[is_abandoned = true]
-    CheckThreshold1 -->|No| UpdateFlag1[UPDATE journey_status_flags]
+flowchart LR
+    Start(["Phase 2 Begins"]) --> FetchOngoing["Query journey_status_flags<br>WHERE is_completed = false<br>AND is_abandoned = false"]
+    FetchOngoing --> LoopJourneys{"For Each<br>Ongoing<br>Journey"}
+    LoopJourneys --> GetDestination["Fetch destination_station_code<br>FROM train_info<br>WHERE train_no = X"]
+    GetDestination --> CallRailRadar2["Call RailRadar API<br>trainNumber=X<br>journeyDate=journey_date<br>dataType=live"]
+    CallRailRadar2 --> APIError2{"API<br>Success?"}
+    APIError2 -- No --> IncrementFlag1["flag = flag + 1<br>last_checked_at = now"]
+    IncrementFlag1 --> CheckThreshold1{"flag &gt;<br>MAX_FLAG<br>?"}
+    CheckThreshold1 -- Yes --> SetAbandoned["is_abandoned = true"]
+    CheckThreshold1 -- No --> UpdateFlag1["UPDATE journey_status_flags"]
     SetAbandoned --> UpdateFlag1
     UpdateFlag1 --> LoopJourneys
-    
-    APIError2 -->|Yes| CheckComplete{currentLocation<br/>.stationCode<br/>==<br/>destination?}
-    
-    CheckComplete -->|No| IncrementFlag2[flag = flag + 1<br/>last_checked_at = now]
-    IncrementFlag2 --> CheckThreshold2{flag ><br/>MAX_FLAG<br/>?}
-    CheckThreshold2 -->|Yes| SetAbandoned2[is_abandoned = true]
-    CheckThreshold2 -->|No| UpdateFlag2[UPDATE journey_status_flags]
+    APIError2 -- Yes --> CheckComplete{"currentLocation<br>.stationCode<br>==<br>destination?"}
+    CheckComplete -- No --> IncrementFlag2["flag = flag + 1<br>last_checked_at = now"]
+    IncrementFlag2 --> CheckThreshold2{"flag &gt;<br>MAX_FLAG<br>?"}
+    CheckThreshold2 -- Yes --> SetAbandoned2["is_abandoned = true"]
+    CheckThreshold2 -- No --> UpdateFlag2["UPDATE journey_status_flags"]
     SetAbandoned2 --> UpdateFlag2
     UpdateFlag2 --> LoopJourneys
-    
-    CheckComplete -->|Yes| ExtractRoute[Extract liveData.route[]<br/>Array of Station Data]
-    
-    ExtractRoute --> LoopStations{For Each<br/>Station<br/>in Route}
-    
-    LoopStations --> InsertStation[INSERT INTO rail_data<br/>train_no, journey_date,<br/>station_code, delays,<br/>actual times, distance]
-    
+    CheckComplete -- Yes --> ExtractRoute["Extract liveData.route<br>Array of Station Data"]
+    ExtractRoute --> LoopStations{"For Each<br>Station<br>in Route"}
+    LoopStations --> InsertStation["INSERT INTO rail_data<br>train_no, journey_date,<br>station_code, delays,<br>actual times, distance"]
     InsertStation --> LoopStations
-    
-    LoopStations -->|Done| MarkComplete[UPDATE journey_status_flags<br/>is_completed = true<br/>last_checked_at = now]
-    
+    LoopStations -- Done --> MarkComplete["UPDATE journey_status_flags<br>is_completed = true<br>last_checked_at = now"]
     MarkComplete --> LoopJourneys
-    
-    LoopJourneys -->|Done| End([Return Success Response])
-    
+    LoopJourneys -- Done --> End(["Return Success Response"])
+
     style Start fill:#ffe1e1
-    style End fill:#e1ffe1
     style CallRailRadar2 fill:#fff4e1
     style SetAbandoned fill:#ffe1e1
     style SetAbandoned2 fill:#ffe1e1
     style MarkComplete fill:#e1ffe1
+    style End fill:#e1ffe1
 ```
 
 **Logic Details:**
