@@ -10,6 +10,7 @@ CREATE TABLE public.journey_status_flags (
   last_checked_at timestamp with time zone,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  is_abandoned boolean DEFAULT false,
   CONSTRAINT journey_status_flags_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.rail_data (
