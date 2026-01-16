@@ -28,3 +28,14 @@ CREATE TABLE public.rail_data (
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT rail_data_pkey PRIMARY KEY (id)
 );
+CREATE TABLE public.train_info (
+  id bigint NOT NULL DEFAULT nextval('train_info_id_seq'::regclass),
+  train_no integer NOT NULL UNIQUE CHECK (train_no > 0),
+  train_name character varying NOT NULL,
+  journey_type character varying NOT NULL CHECK (journey_type::text = ANY (ARRAY['one_day'::character varying, 'multiple_day'::character varying]::text[])),
+  destination_station_code character varying NOT NULL,
+  journey_duration integer CHECK (journey_duration > 0),
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT train_info_pkey PRIMARY KEY (id)
+);
