@@ -15,7 +15,7 @@ services:
       - key: SUPABASE_KEY
         sync: false
       - key: MAX_FLAG_THRESHOLD
-        value: 6
+        value: 5
       - key: TIMEZONE
         value: Asia/Kolkata
       - key: FLASK_ENV
