@@ -124,19 +124,29 @@ class SupabaseDB:
             logger.error(f"Error creating journey ({train_no}, {journey_date}): {e}")
             raise
     
-    def get_ongoing_journeys(self) -> List[Dict[str, Any]]:
+    def get_ongoing_journeys(self, journey_type: str = None) -> List[Dict[str, Any]]:
         """
         Fetch all ongoing (incomplete and not abandoned) journeys.
+        
+        Args:
+            journey_type: Optional filter for journey type ('one_day' or 'multiple_day')
         
         Returns:
             List of journey records with train_no, journey_date, flag
         """
         try:
-            response = self.client.table("journey_status_flags").select(
-                "train_no, journey_date, flag"
-            ).eq("is_completed", False).eq("is_abandoned", False).execute()
+            query = self.client.table("journey_status_flags").select(
+                "train_no, journey_date, flag, train_info!inner(journey_type)"
+            ).eq("is_completed", False).eq("is_abandoned", False)
             
-            logger.info(f"Fetched {len(response.data)} ongoing journeys")
+            # Filter by journey_type if provided
+            if journey_type:
+                query = query.eq("train_info.journey_type", journey_type)
+            
+            response = query.execute()
+            
+            filter_msg = f" with journey_type={journey_type}" if journey_type else ""
+            logger.info(f"Fetched {len(response.data)} ongoing journeys{filter_msg}")
             return response.data
         
         except Exception as e:

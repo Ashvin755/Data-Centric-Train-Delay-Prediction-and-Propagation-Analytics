@@ -104,12 +104,12 @@ def poll_one_day_trains():
         start_time = datetime.now(timezone.utc)
         
         # Phase 1: Detect new journeys starting today (using one-day API key)
-        logger.info("Starting Phase 1...")
+        logger.info("Starting Phase 1 with one-day API key...")
         phase1_stats = phase1_processor_one_day.execute("one_day")
         
-        # Phase 2: Track ongoing journeys (using one-day API key)
-        logger.info("Starting Phase 2...")
-        phase2_stats = phase2_processor_one_day.execute()
+        # Phase 2: Track ongoing journeys of one_day type (using one-day API key)
+        logger.info("Starting Phase 2 for one_day journeys with one-day API key...")
+        phase2_stats = phase2_processor_one_day.execute(journey_type="one_day")
         
         end_time = datetime.now(timezone.utc)
         duration = (end_time - start_time).total_seconds()
@@ -154,12 +154,12 @@ def poll_multi_day_trains():
         start_time = datetime.now(timezone.utc)
         
         # Phase 1: Detect new journeys starting today (using multi-day API key)
-        logger.info("Starting Phase 1...")
+        logger.info("Starting Phase 1 with multi-day API key...")
         phase1_stats = phase1_processor_multi_day.execute("multiple_day")
         
-        # Phase 2: Track ongoing journeys (using multi-day API key)
-        logger.info("Starting Phase 2...")
-        phase2_stats = phase2_processor_multi_day.execute()
+        # Phase 2: Track ongoing journeys of multiple_day type (using multi-day API key)
+        logger.info("Starting Phase 2 for multiple_day journeys with multi-day API key...")
+        phase2_stats = phase2_processor_multi_day.execute(journey_type="multiple_day")
         
         end_time = datetime.now(timezone.utc)
         duration = (end_time - start_time).total_seconds()

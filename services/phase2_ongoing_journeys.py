@@ -30,13 +30,17 @@ class Phase2OngoingJourneys:
         self.max_flag_threshold = max_flag_threshold
         logger.info(f"Phase 2 processor initialized with max_flag_threshold={max_flag_threshold}")
     
-    def execute(self) -> Dict[str, Any]:
+    def execute(self, journey_type: str = None) -> Dict[str, Any]:
         """
         Execute Phase 2: Track ongoing journeys and detect completion.
         
+        Args:
+            journey_type: Filter journeys by type ('one_day' or 'multiple_day')
+        
         Logic:
         1. Fetch all journeys with is_completed=false AND is_abandoned=false
-        2. For each ongoing journey:
+        2. Filter by journey_type if provided
+        3. For each ongoing journey:
            a. Get destination station code from train_info
            b. Call RailRadar API with journey_date
            c. If API fails: increment flag
@@ -47,7 +51,8 @@ class Phase2OngoingJourneys:
         Returns:
             Dict with execution statistics
         """
-        logger.info("=== Phase 2: Ongoing Journey Tracking ===")
+        journey_type_msg = f" (journey_type={journey_type})" if journey_type else ""
+        logger.info(f"=== Phase 2: Ongoing Journey Tracking{journey_type_msg} ===")
         
         stats = {
             "journeys_tracked": 0,
@@ -58,8 +63,8 @@ class Phase2OngoingJourneys:
         }
         
         try:
-            # Fetch all ongoing journeys
-            ongoing_journeys = self.db.get_ongoing_journeys()
+            # Fetch all ongoing journeys (filtered by journey_type if provided)
+            ongoing_journeys = self.db.get_ongoing_journeys(journey_type=journey_type)
             logger.info(f"Found {len(ongoing_journeys)} ongoing journeys to track")
             
             if not ongoing_journeys:
