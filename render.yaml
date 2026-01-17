@@ -1,13 +1,11 @@
 services:
   - type: web
-    name: rail-data-one-day
+    name: rail-data-collector
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app --bind 0.0.0.0:$PORT --timeout 120
     envVars:
-      - key: ENDPOINT_TYPE
-        value: one_day
       - key: RAILRADAR_API_KEY
         sync: false
       - key: SUPABASE_URL
@@ -21,26 +19,4 @@ services:
       - key: FLASK_ENV
         value: production
     healthCheckPath: /health
-
-  - type: web
-    name: rail-data-multi-day
-    runtime: python
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn main:app --bind 0.0.0.0:$PORT --timeout 120
-    envVars:
-      - key: ENDPOINT_TYPE
-        value: multiple_day
-      - key: RAILRADAR_API_KEY
-        sync: false
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_KEY
-        sync: false
-      - key: MAX_FLAG_THRESHOLD
-        value: 6
-      - key: TIMEZONE
-        value: Asia/Kolkata
-      - key: FLASK_ENV
-        value: production
-    healthCheckPath: /health
+    # Note: Both /poll/one-day and /poll/multi-day endpoints available from single service

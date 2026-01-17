@@ -684,44 +684,48 @@ services:
 
 ### Core Components
 
-- [ ] **Flask application setup** (`main.py`)
-  - [ ] Initialize Flask app
-  - [ ] Load environment variables
-  - [ ] Configure logging
-  - [ ] Health check endpoint `/health`
+- [x] **Flask application setup** (`main.py`)
+  - [x] Initialize Flask app
+  - [x] Load environment variables
+  - [x] Configure logging
+  - [x] Health check endpoint `/health`
 
-- [ ] **Supabase client wrapper** (`db/supabase_client.py`)
-  - [ ] Initialize Supabase client
-  - [ ] Query functions for each table
-  - [ ] Transaction handling for completed journeys
-  - [ ] Error handling and retries
+- [x] **Supabase client wrapper** (`db/supabase_client.py`)
+  - [x] Initialize Supabase client
+  - [x] Query functions for each table
+  - [x] Transaction handling for completed journeys
+  - [x] Error handling and retries
 
-- [ ] **RailRadar API client** (`api/railradar.py`)
-  - [ ] Reuse/refactor `utils/termux.py` logic
-  - [ ] Add journey validation functions
-  - [ ] Add completion detection functions
-  - [ ] Timeout and error handling
+- [x] **RailRadar API client** (`api/railradar.py`)
+  - [x] Reuse/refactor `utils/termux.py` logic
+  - [x] Add journey validation functions
+  - [x] Add completion detection functions
+  - [x] Timeout and error handling
+  - [x] Handle both API response formats (nested liveData and root-level)
 
-- [ ] **Business logic modules**
-  - [ ] `services/phase1_new_journeys.py` - New journey detection
-  - [ ] `services/phase2_ongoing_journeys.py` - Tracking and completion
-  - [ ] `services/data_extractor.py` - Parse route data for rail_data
+- [x] **Business logic modules**
+  - [x] `services/phase1_new_journeys.py` - New journey detection
+  - [x] `services/phase2_ongoing_journeys.py` - Tracking and completion
+  - [x] Route data extraction integrated in phase2
 
-- [ ] **Polling endpoints** (`routes/poll.py`)
-  - [ ] `/poll/one-day` - Calls both phases with journey_type='one_day'
-  - [ ] `/poll/multi-day` - Calls both phases with journey_type='multiple_day'
-  - [ ] Response formatting
+- [x] **Polling endpoints** (`main.py`)
+  - [x] `/poll/one-day` - Calls both phases with journey_type='one_day'
+  - [x] `/poll/multi-day` - Calls both phases with journey_type='multiple_day'
+  - [x] Response formatting
 
 ### Configuration Files
 
-- [ ] `requirements.txt` - Dependencies
-- [ ] `.env.example` - Template for secrets
-- [ ] `render.yaml` - Deployment config
-- [ ] `README.md` - Setup and deployment instructions
+- [x] `requirements.txt` - Dependencies (including gunicorn)
+- [x] `.env.example` - Template for secrets
+- [x] `render.yaml` - Deployment config (dual services)
+- [x] `README.md` - Setup and deployment instructions
 
 ### Testing & Validation
 
-- [ ] Manual test with real train data
+- [x] Manual test with real train data
+- [x] Verify API response format handling
+- [x] Test Phase 1 new journey detection
+- [x] Test Phase 2 ongoing journey tracking
 - [ ] Verify idempotency (call endpoint twice)
 - [ ] Test flag incrementation logic
 - [ ] Test abandonment threshold
@@ -731,8 +735,8 @@ services:
 
 - [ ] API usage tracking spreadsheet
 - [ ] UptimeRobot configuration guide
-- [ ] Train seeding instructions for Supabase
-- [ ] Known limitations and selection bias notice
+- [x] Train seeding instructions for Supabase
+- [x] Known limitations and selection bias notice
 
 ---
 
