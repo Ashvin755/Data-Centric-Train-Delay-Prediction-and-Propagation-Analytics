@@ -72,7 +72,7 @@ def health_check():
     """Health check endpoint for monitoring."""
     return jsonify({
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": "rail-data-collector",
         "endpoints": ["one-day", "multi-day"]
     }), 200
@@ -83,7 +83,7 @@ def health_check2():
     """Health check endpoint for monitoring."""
     return jsonify({
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": "rail-data-collector",
         "endpoints": ["one-day", "multi-day"]
     }), 200

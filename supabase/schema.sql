@@ -11,7 +11,8 @@ CREATE TABLE public.journey_status_flags (
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   is_abandoned boolean DEFAULT false,
-  CONSTRAINT journey_status_flags_pkey PRIMARY KEY (id)
+  CONSTRAINT journey_status_flags_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_journey_train_info FOREIGN KEY (train_no) REFERENCES public.train_info(train_no)
 );
 CREATE TABLE public.rail_data (
   id bigint NOT NULL DEFAULT nextval('rail_data_id_seq'::regclass),
@@ -27,7 +28,8 @@ CREATE TABLE public.rail_data (
   distance_from_origin_km numeric,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT rail_data_pkey PRIMARY KEY (id)
+  CONSTRAINT rail_data_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_rail_data_train_info FOREIGN KEY (train_no) REFERENCES public.train_info(train_no)
 );
 CREATE TABLE public.train_info (
   id bigint NOT NULL DEFAULT nextval('train_info_id_seq'::regclass),

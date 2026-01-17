@@ -6,7 +6,7 @@ Handles all database operations for journey tracking and data storage.
 
 import logging
 from typing import List, Dict, Optional, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from supabase import create_client, Client
 
 logger = logging.getLogger(__name__)
@@ -114,7 +114,7 @@ class SupabaseDB:
                 "flag": 0,
                 "is_completed": False,
                 "is_abandoned": False,
-                "last_checked_at": datetime.utcnow().isoformat()
+                "last_checked_at": datetime.now(timezone.utc).isoformat()
             }
             
             self.client.table("journey_status_flags").insert(data).execute()
@@ -201,7 +201,7 @@ class SupabaseDB:
         try:
             update_data = {
                 "is_abandoned": True,
-                "last_checked_at": datetime.utcnow().isoformat()
+                "last_checked_at": datetime.now(timezone.utc).isoformat()
             }
             
             self.client.table("journey_status_flags").update(
@@ -225,7 +225,7 @@ class SupabaseDB:
         try:
             update_data = {
                 "is_completed": True,
-                "last_checked_at": datetime.utcnow().isoformat()
+                "last_checked_at": datetime.now(timezone.utc).isoformat()
             }
             
             self.client.table("journey_status_flags").update(
