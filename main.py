@@ -78,6 +78,17 @@ def health_check():
     }), 200
 
 
+@app.route("/health2", methods=["GET"])
+def health_check2():
+    """Health check endpoint for monitoring."""
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "service": "rail-data-collector",
+        "endpoints": ["one-day", "multi-day"]
+    }), 200
+
+
 @app.route("/poll/one-day", methods=["GET"])
 def poll_one_day_trains():
     """
