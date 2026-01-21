@@ -17,9 +17,10 @@ ENV/
 *.swp
 *.swo
 
-# Logs
-*.log
-
 # OS
 .DS_Store
 Thumbs.db
+
+# Temporary check files
+check_fk.py
+check_existing_fk.py

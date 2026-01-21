@@ -1,0 +1,43 @@
+name: One-Day Train Polling
+
+on:
+  schedule:
+    # Run every 5 hours (at :00 minutes)
+    - cron: '0 */5 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  poll-one-day-trains:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Run one-day polling
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RAILRADAR_API_KEY_ONE_DAY: ${{ secrets.RAILRADAR_API_KEY_ONE_DAY }}
+          MAX_FLAG_THRESHOLD: ${{ vars.MAX_FLAG_THRESHOLD }}
+          TIMEZONE: Asia/Kolkata
+        run: |
+          python run_one_day_poll.py
+      
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: one-day-logs-${{ github.run_number }}
+          path: logs/one_day_*.log
+          retention-days: 30
