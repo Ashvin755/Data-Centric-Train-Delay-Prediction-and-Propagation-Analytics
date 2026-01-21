@@ -47,7 +47,7 @@ def main():
         SUPABASE_URL = os.getenv("SUPABASE_URL")
         SUPABASE_KEY = os.getenv("SUPABASE_KEY")
         RAILRADAR_API_KEY = os.getenv("RAILRADAR_API_KEY_ONE_DAY")
-        MAX_FLAG_THRESHOLD = int(os.getenv("MAX_FLAG_THRESHOLD", "8"))
+        MAX_FLAG_THRESHOLD = int(os.getenv("MAX_FLAG_THRESHOLD") or "8")
         TIMEZONE = os.getenv("TIMEZONE", "Asia/Kolkata")
         
         # Validate environment variables
