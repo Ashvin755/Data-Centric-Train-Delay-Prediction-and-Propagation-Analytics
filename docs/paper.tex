@@ -11,15 +11,15 @@
 \title{Indian Railways Delay Dataset: A Real-Time Data Collection System for Train Performance Analysis}
 
 \author{
-    Author Name 1 \\
+    Arjun Sarje \\
     Samrat Ashok Technological Institute \\
     Vidisha, Madhya Pradesh, India \\
-    \texttt{email1@example.com}
+    \texttt{arjun27ai020@satiengg.in}
     \and
-    Author Name 2 \\
+    Ashvin Sukaye \\
     Samrat Ashok Technological Institute \\
     Vidisha, Madhya Pradesh, India \\
-    \texttt{email2@example.com}
+    \texttt{ashvin27ai023@satiengg.in}
 }
 
 \date{February 2026}
@@ -99,7 +99,7 @@ Our work directly addresses these gaps by providing an open, automated, and cont
 
 \subsection{System Architecture}
 
-Our data collection system employs a stateless, cloud-based architecture designed for reliability and scalability. The system architecture consists of four primary components:
+Our data collection system employs a stateless, cloud-based architecture designed for reliability and scalability (Figure \ref{fig:architecture}). The system architecture consists of four primary components:
 
 \begin{enumerate}
     \item \textbf{External Scheduler}: UptimeRobot triggers HTTP polling endpoints at configurable intervals (5 hours for single-day trains, 12 hours for multi-day trains)
@@ -138,7 +138,7 @@ Active journeys are polled at regular intervals to monitor progress. For each in
 
 \subsection{Journey State Management}
 
-The system implements a state machine to handle journey lifecycles:
+The system implements a state machine to handle journey lifecycles (Figure \ref{fig:state_machine}):
 
 \begin{itemize}
     \item \textbf{Not Tracked}: Train not yet in system
@@ -146,6 +146,13 @@ The system implements a state machine to handle journey lifecycles:
     \item \textbf{Completed}: Train reached destination, all data recorded
     \item \textbf{Abandoned}: API failures exceeded threshold (6 consecutive failures), journey marked incomplete
 \end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{journey_state_diagram.png}
+\caption{Journey state machine showing transitions from Not Tracked through In Progress to either Completed or Abandoned states}
+\label{fig:state_machine}
+\end{figure}
 
 This state-based approach ensures data integrity while gracefully handling API unavailability and network issues.
 
@@ -169,7 +176,31 @@ Our initial dataset covers 10 trains selected to represent diverse journey chara
     \item \textbf{6 Multi-Day Trains}: Long-distance journeys spanning 2-3 days, covering 1000-2500 km
 \end{itemize}
 
-This stratification enables comparative analysis between short-haul and long-haul delay patterns. Train selection prioritized daily service availability and route diversity across different geographic regions.
+This stratification enables comparative analysis between short-haul and long-haul delay patterns. Train selection prioritized daily service availability and route diversity across different geographic regions. Table \ref{tab:train_info} lists all 10 trains currently monitored in our system.
+
+\begin{table*}[h]
+\centering
+\small
+\begin{tabular}{@{}clcccc@{}}
+\toprule
+\textbf{Train} & \textbf{Train Name} & \textbf{Journey} & \textbf{Destination} & \textbf{Duration} \\
+\textbf{No.} & & \textbf{Type} & \textbf{Station} & \textbf{(hours)} \\
+\midrule
+61631 & Bhopal - Bina MEMU & one\_day & BINA & 3 \\
+11605 & Bhopal - Bina MEMU Express & one\_day & BINA & 2 \\
+11606 & Bina - Bhopal MEMU Express & one\_day & BPL & 2 \\
+61632 & Bina - Bhopal MEMU & one\_day & BPL & 3 \\
+12137 & Punjab Mail (PT) & multiple\_day & FZR & 33 \\
+12138 & Punjab Mail & multiple\_day & CSMT & 33 \\
+11077 & Jhelum Express (PT) & multiple\_day & JAT & 40 \\
+11078 & Jhelum Express & multiple\_day & PUNE & 40 \\
+18237 & Chhattisgarh Express (PT) & multiple\_day & ASR & 43 \\
+18238 & Chhattisgarh Express (PT) & multiple\_day & BSP & 42 \\
+\bottomrule
+\end{tabular}
+\caption{Complete list of 10 trains monitored in the dataset: 4 single-day MEMU trains (2-3 hour journeys) and 6 multi-day express trains (33-43 hour long-distance journeys). PT indicates partial terminus.}
+\label{tab:train_info}
+\end{table*}
 
 \section{Dataset Description}
 
@@ -227,6 +258,29 @@ Data collection frequency & 5h (single-day), 12h (multi-day) \\
 \label{tab:dataset_stats}
 \end{table}
 
+\subsection{Journey Tracking Example}
+
+Table \ref{tab:journey_flags} illustrates the journey\_status\_flags table, which tracks lifecycle state of each journey. The flag counter indicates API polling attempts before completion—Train 61631 completed immediately (flag=0), while Train 12137 required 3 polling cycles before reaching its destination after a 33-hour journey. All shown journeys completed successfully (is\_completed=true, is\_abandoned=false).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}ccccccc@{}}
+\toprule
+\textbf{Train} & \textbf{Journey} & \textbf{Flag} & \textbf{Completed} & \textbf{Abandoned} \\
+\textbf{No.} & \textbf{Date} & & & \\
+\midrule
+61631 & 2026-01-17 & 0 & true & false \\
+11605 & 2026-01-17 & 0 & true & false \\
+11606 & 2026-01-17 & 0 & true & false \\
+61632 & 2026-01-17 & 2 & true & false \\
+12137 & 2026-01-17 & 3 & true & false \\
+\bottomrule
+\end{tabular}
+\caption{Sample journey\_status\_flags records showing tracking state for five journeys on January 17, 2026. Flag values indicate polling cycles before completion—multi-day trains (e.g., 12137) typically require more cycles than single-day trains.}
+\label{tab:journey_flags}
+\end{table}
+
 \subsection{Data Attributes}
 
 Each station-level record contains:
@@ -237,6 +291,30 @@ Each station-level record contains:
     \item \textbf{Spatial attributes}: Station code and cumulative distance from origin, enabling geographic analysis
     \item \textbf{Journey context}: Train number and journey date linking records to complete journey trajectory
 \end{itemize}
+
+\subsection{Data Example}
+
+Table \ref{tab:data_example} presents sample records from the rail\_data table, illustrating typical station-level data structure. Train 61631's journey on January 17, 2026 shows progressively increasing delays at consecutive stations (SMT, SCI, BHS, SUMR, GLG). Both arrival and departure delays escalate from 10-12 minutes at SMT to 18-20 minutes at GLG, demonstrating delay accumulation patterns common in Indian Railways operations.
+
+\begin{table*}[h]
+\centering
+\small
+\begin{tabular}{@{}ccccccccc@{}}
+\toprule
+\textbf{Train} & \textbf{Date} & \textbf{Station} & \textbf{Sched.} & \textbf{Sched.} & \textbf{Actual} & \textbf{Actual} & \textbf{Delay} & \textbf{Delay} \\
+\textbf{No.} & & \textbf{Code} & \textbf{Arr.} & \textbf{Dep.} & \textbf{Arr.} & \textbf{Dep.} & \textbf{Arr.} & \textbf{Dep.} \\
+& & & \textbf{(Unix)} & \textbf{(Unix)} & \textbf{(Unix)} & \textbf{(Unix)} & \textbf{(min)} & \textbf{(min)} \\
+\midrule
+61631 & 2026-01-17 & SMT & 1768617720 & 1768617780 & 1768618314 & 1768618492 & 10 & 12 \\
+61631 & 2026-01-17 & SCI & 1768618140 & 1768618260 & 1768618886 & 1768619117 & 12 & 14 \\
+61631 & 2026-01-17 & BHS & 1768618800 & 1768618920 & 1768619665 & 1768619952 & 14 & 17 \\
+61631 & 2026-01-17 & SUMR & 1768619880 & 1768619940 & 1768620830 & 1768621132 & 16 & 20 \\
+61631 & 2026-01-17 & GLG & 1768620360 & 1768620480 & 1768621459 & 1768621704 & 18 & 20 \\
+\bottomrule
+\end{tabular}
+\caption{Sample records from rail\_data table showing Train 61631's journey progression through five consecutive stations (SMT, SCI, BHS, SUMR, GLG) with progressively increasing delays from 10-20 minutes. Both arrival and departure delays are captured at each station. Timestamps are stored as Unix epoch (seconds since 1970-01-01 UTC).}
+\label{tab:data_example}
+\end{table*}
 
 \subsection{Data Availability}
 
