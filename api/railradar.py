@@ -18,7 +18,8 @@ class RailRadarAPI:
     
     BASE_URL = "https://api.railradar.in/api/v1/trains"
     MAX_RETRIES = 3
-    RETRY_DELAY = 2  # seconds
+    RETRY_BASE_DELAY = 3  # seconds
+    REQUEST_DELAY = 1.5  # seconds between requests to avoid rate limiting
     
     def __init__(self, api_key: str):
         """
@@ -52,6 +53,9 @@ class RailRadarAPI:
         masked_key = api_key[:10] + "***" + api_key[-5:] if len(api_key) > 15 else "***"
         logger.info(f"RailRadar API client initialized with key: {masked_key}")
         logger.info("Using cloudscraper for Cloudflare bypass")
+        
+        # Track last request time for rate limiting
+        self._last_request_time = 0
     
     def get_train_data(self, train_number: int, journey_date: str, 
                        data_type: str = "live") -> Optional[Dict[str, Any]]:
@@ -74,21 +78,31 @@ class RailRadarAPI:
             "userId": ""  # Required parameter (can be empty string)
         }
         
-        # Retry loop for transient failures
+        # Retry loop for transient failures with exponential backoff
         for attempt in range(1, self.MAX_RETRIES + 1):
             try:
+                # Rate limiting: wait between requests to avoid Cloudflare triggers
+                current_time = time.time()
+                time_since_last = current_time - self._last_request_time
+                if time_since_last < self.REQUEST_DELAY:
+                    wait_time = self.REQUEST_DELAY - time_since_last
+                    logger.debug(f"Rate limiting: waiting {wait_time:.2f}s before request")
+                    time.sleep(wait_time)
+                
                 logger.debug(f"Calling RailRadar API (attempt {attempt}/{self.MAX_RETRIES}): train={train_number}, date={journey_date}")
                 logger.info(f"Request: GET {url} with params={params}")
                 
-                response = self.scraper.get(url, params=params, timeout=15)
+                response = self.scraper.get(url, params=params, timeout=20)
+                self._last_request_time = time.time()
                 logger.debug(f"Response status: {response.status_code}")
                 
                 # Check for Cloudflare challenge page
                 if "Just a moment" in response.text or "cloudflare" in response.text.lower():
+                    retry_delay = self.RETRY_BASE_DELAY * (2 ** (attempt - 1))  # Exponential: 3s, 6s, 12s
                     logger.warning(f"Cloudflare challenge detected on attempt {attempt}")
                     if attempt < self.MAX_RETRIES:
-                        logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
-                        time.sleep(self.RETRY_DELAY)
+                        logger.info(f"Retrying in {retry_delay} seconds (exponential backoff)...")
+                        time.sleep(retry_delay)
                         continue
                     else:
                         logger.error("Max retries reached, Cloudflare still blocking")
@@ -109,16 +123,18 @@ class RailRadarAPI:
                 return inner_data
             
             except cloudscraper.exceptions.CloudflareChallengeError as e:
+                retry_delay = self.RETRY_BASE_DELAY * (2 ** (attempt - 1))  # Exponential backoff
                 logger.error(f"Cloudflare challenge failed on attempt {attempt}: {e}")
                 if attempt < self.MAX_RETRIES:
-                    logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
-                    time.sleep(self.RETRY_DELAY)
+                    logger.info(f"Retrying in {retry_delay} seconds (exponential backoff)...")
+                    time.sleep(retry_delay)
                 else:
                     logger.error("Max retries reached for Cloudflare challenge")
                     return None
             
             except Exception as e:
                 error_type = type(e).__name__
+                retry_delay = self.RETRY_BASE_DELAY * (2 ** (attempt - 1))  # Exponential backoff
                 logger.error(f"{error_type} for train {train_number} on attempt {attempt}: {e}")
                 
                 # Log response details if available
@@ -128,8 +144,8 @@ class RailRadarAPI:
                 
                 # Retry on transient errors
                 if attempt < self.MAX_RETRIES and error_type in ['Timeout', 'ConnectionError', 'HTTPError']:
-                    logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
-                    time.sleep(self.RETRY_DELAY)
+                    logger.info(f"Retrying in {retry_delay} seconds (exponential backoff)...")
+                    time.sleep(retry_delay)
                 else:
                     logger.error(f"Max retries reached or non-retryable error ({error_type})")
                     return None
