@@ -1,0 +1,554 @@
+2026-02-12 00:09:52,748 - __main__ - INFO - ======================================================================
+2026-02-12 00:09:52,749 - __main__ - INFO - ONE-DAY TRAIN POLLING STARTED
+2026-02-12 00:09:52,749 - __main__ - INFO - ======================================================================
+2026-02-12 00:09:52,750 - __main__ - INFO - Configuration loaded - Threshold: 5, Timezone: Asia/Kolkata
+2026-02-12 00:09:52,750 - __main__ - INFO - Initializing clients...
+2026-02-12 00:09:52,754 - __main__ - INFO - ======================================================================
+2026-02-12 00:10:27,958 - __main__ - INFO - ======================================================================
+2026-02-12 00:10:27,959 - __main__ - INFO - ONE-DAY TRAIN POLLING STARTED
+2026-02-12 00:10:27,959 - __main__ - INFO - ======================================================================
+2026-02-12 00:10:27,959 - __main__ - INFO - Configuration loaded - Threshold: 5, Timezone: Asia/Kolkata
+2026-02-12 00:10:27,959 - __main__ - INFO - Initializing clients...
+2026-02-12 00:10:28,241 - db.supabase_client - INFO - Supabase client initialized
+2026-02-12 00:10:28,262 - api.railradar - INFO - RailRadar API client initialized with key: rr_lx1i9s8***jmv9i
+2026-02-12 00:10:28,262 - api.railradar - INFO - Using cloudscraper for Cloudflare bypass
+2026-02-12 00:10:28,403 - services.phase1_new_journeys - INFO - Phase 1 processor initialized with timezone: Asia/Kolkata
+2026-02-12 00:10:28,404 - services.phase2_ongoing_journeys - INFO - Phase 2 processor initialized with max_flag_threshold=5
+2026-02-12 00:10:28,404 - __main__ - INFO - Starting Phase 1 - New Journey Detection...
+2026-02-12 00:10:28,404 - services.phase1_new_journeys - INFO - === Phase 1: New Journey Detection (journey_type=one_day) ===
+2026-02-12 00:10:28,404 - services.phase1_new_journeys - INFO - Checking for new journeys starting on: 2026-02-12
+2026-02-12 00:10:29,779 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=train_no%2C%20train_name%2C%20destination_station_code%2C%20journey_type&journey_type=eq.one_day "HTTP/1.1 200 OK"
+2026-02-12 00:10:29,781 - db.supabase_client - INFO - Fetched 4 trains for journey_type=one_day
+2026-02-12 00:10:29,782 - services.phase1_new_journeys - INFO - Found 4 trains with journey_type=one_day
+2026-02-12 00:10:30,021 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=id&train_no=eq.61631&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:10:30,021 - services.phase1_new_journeys - INFO - Checking if train 61631 started today...
+2026-02-12 00:10:30,021 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:31,681 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags "HTTP/1.1 201 Created"
+2026-02-12 00:10:31,684 - db.supabase_client - INFO - Created journey tracking for (61631, 2026-02-12)
+2026-02-12 00:10:32,031 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=id&train_no=eq.11605&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:10:32,032 - services.phase1_new_journeys - INFO - Checking if train 11605 started today...
+2026-02-12 00:10:32,905 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:33,569 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags "HTTP/1.1 201 Created"
+2026-02-12 00:10:33,572 - db.supabase_client - INFO - Created journey tracking for (11605, 2026-02-12)
+2026-02-12 00:10:33,875 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=id&train_no=eq.11606&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:10:33,877 - services.phase1_new_journeys - INFO - Checking if train 11606 started today...
+2026-02-12 00:10:34,761 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:35,323 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags "HTTP/1.1 201 Created"
+2026-02-12 00:10:35,324 - db.supabase_client - INFO - Created journey tracking for (11606, 2026-02-12)
+2026-02-12 00:10:35,616 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=id&train_no=eq.61632&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:10:35,619 - services.phase1_new_journeys - INFO - Checking if train 61632 started today...
+2026-02-12 00:10:36,572 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:37,562 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags "HTTP/1.1 201 Created"
+2026-02-12 00:10:37,563 - db.supabase_client - INFO - Created journey tracking for (61632, 2026-02-12)
+2026-02-12 00:10:37,565 - services.phase1_new_journeys - INFO - Phase 1 completed: {'trains_checked': 4, 'new_journeys_detected': 4, 'api_errors': 0, 'already_tracked': 0}
+2026-02-12 00:10:37,567 - __main__ - INFO - Phase 1 completed: {'trains_checked': 4, 'new_journeys_detected': 4, 'api_errors': 0, 'already_tracked': 0}
+2026-02-12 00:10:37,567 - __main__ - INFO - Starting Phase 2 - Ongoing Journey Tracking...
+2026-02-12 00:10:37,568 - services.phase2_ongoing_journeys - INFO - === Phase 2: Ongoing Journey Tracking (journey_type=one_day) ===
+2026-02-12 00:10:37,781 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=train_no%2C%20journey_date%2C%20flag%2C%20train_info%21inner%28journey_type%29&is_completed=eq.False&is_abandoned=eq.False&train_info.journey_type=eq.one_day "HTTP/1.1 200 OK"
+2026-02-12 00:10:37,783 - db.supabase_client - INFO - Fetched 26 ongoing journeys with journey_type=one_day
+2026-02-12 00:10:37,783 - services.phase2_ongoing_journeys - INFO - Found 26 ongoing journeys to track
+2026-02-12 00:10:37,784 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-05), flag=1
+2026-02-12 00:10:38,074 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:10:38,755 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-05', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:39,089 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:10:39,090 - services.phase2_ongoing_journeys - INFO - Journey completed: (11605, 2026-02-05)
+2026-02-12 00:10:39,090 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:10:39,373 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:39,610 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:39,823 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:40,122 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:40,428 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:40,727 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:40,980 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:40,981 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11605, 2026-02-05)
+2026-02-12 00:10:40,981 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11605, 2026-02-05)
+2026-02-12 00:10:41,250 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-05 "HTTP/1.1 200 OK"
+2026-02-12 00:10:41,252 - db.supabase_client - INFO - Marked journey as completed: (11605, 2026-02-05)
+2026-02-12 00:10:41,255 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-05), flag=1
+2026-02-12 00:10:41,555 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:10:41,556 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-05', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:41,968 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:10:41,968 - services.phase2_ongoing_journeys - INFO - Journey completed: (61632, 2026-02-05)
+2026-02-12 00:10:41,969 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:10:42,246 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:42,579 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:42,887 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:43,092 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:43,296 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:43,521 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:43,808 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:44,067 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:44,321 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:44,626 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:44,934 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:45,241 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:45,515 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:45,774 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:46,061 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:46,369 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:46,369 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61632, 2026-02-05)
+2026-02-12 00:10:46,369 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61632, 2026-02-05)
+2026-02-12 00:10:46,584 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-05 "HTTP/1.1 200 OK"
+2026-02-12 00:10:46,585 - db.supabase_client - INFO - Marked journey as completed: (61632, 2026-02-05)
+2026-02-12 00:10:46,586 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-07), flag=0
+2026-02-12 00:10:46,880 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:10:46,880 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-07', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:47,143 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:10:47,143 - services.phase2_ongoing_journeys - INFO - Journey completed: (11605, 2026-02-07)
+2026-02-12 00:10:47,143 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:10:47,393 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:47,699 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:48,007 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:48,326 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:48,580 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:48,833 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:49,057 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:49,058 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11605, 2026-02-07)
+2026-02-12 00:10:49,059 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11605, 2026-02-07)
+2026-02-12 00:10:49,338 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-07 "HTTP/1.1 200 OK"
+2026-02-12 00:10:49,340 - db.supabase_client - INFO - Marked journey as completed: (11605, 2026-02-07)
+2026-02-12 00:10:49,343 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11606, 2026-02-08), flag=0
+2026-02-12 00:10:49,645 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11606 "HTTP/1.1 200 OK"
+2026-02-12 00:10:49,647 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-08', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:49,957 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:10:49,958 - services.phase2_ongoing_journeys - INFO - Journey completed: (11606, 2026-02-08)
+2026-02-12 00:10:49,958 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:10:50,200 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:50,464 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:50,771 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:51,080 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:51,382 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:51,694 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:51,932 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:51,934 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11606, 2026-02-08)
+2026-02-12 00:10:51,935 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11606, 2026-02-08)
+2026-02-12 00:10:52,207 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11606&journey_date=eq.2026-02-08 "HTTP/1.1 200 OK"
+2026-02-12 00:10:52,207 - db.supabase_client - INFO - Marked journey as completed: (11606, 2026-02-08)
+2026-02-12 00:10:52,211 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11606, 2026-02-10), flag=0
+2026-02-12 00:10:52,513 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11606 "HTTP/1.1 200 OK"
+2026-02-12 00:10:52,517 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-10', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:52,826 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:10:52,826 - services.phase2_ongoing_journeys - INFO - Journey completed: (11606, 2026-02-10)
+2026-02-12 00:10:52,827 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:10:53,128 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:53,373 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:53,638 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:53,844 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:54,150 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:54,458 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:54,767 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:54,769 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11606, 2026-02-10)
+2026-02-12 00:10:54,769 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11606, 2026-02-10)
+2026-02-12 00:10:55,015 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11606&journey_date=eq.2026-02-10 "HTTP/1.1 200 OK"
+2026-02-12 00:10:55,016 - db.supabase_client - INFO - Marked journey as completed: (11606, 2026-02-10)
+2026-02-12 00:10:55,021 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61631, 2026-02-07), flag=0
+2026-02-12 00:10:55,277 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61631 "HTTP/1.1 200 OK"
+2026-02-12 00:10:55,279 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-07', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:10:55,590 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:10:55,590 - services.phase2_ongoing_journeys - INFO - Journey completed: (61631, 2026-02-07)
+2026-02-12 00:10:55,590 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:10:55,896 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:56,199 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:56,428 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:56,711 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:56,922 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:57,226 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:57,531 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:57,837 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:58,126 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:58,817 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:59,170 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:59,476 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:59,673 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:10:59,988 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:00,232 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:00,502 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:00,503 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61631, 2026-02-07)
+2026-02-12 00:11:00,504 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61631, 2026-02-07)
+2026-02-12 00:11:00,809 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61631&journey_date=eq.2026-02-07 "HTTP/1.1 200 OK"
+2026-02-12 00:11:00,810 - db.supabase_client - INFO - Marked journey as completed: (61631, 2026-02-07)
+2026-02-12 00:11:00,814 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-10), flag=0
+2026-02-12 00:11:00,999 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:11:00,999 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-10', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:01,321 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:11:01,321 - services.phase2_ongoing_journeys - INFO - Journey completed: (61632, 2026-02-10)
+2026-02-12 00:11:01,321 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:01,536 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:01,770 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:02,037 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:02,338 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:02,572 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:02,777 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:02,990 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:03,222 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:03,471 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:03,777 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:04,084 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:04,392 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:04,698 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:04,994 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:05,287 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:05,529 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:05,530 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61632, 2026-02-10)
+2026-02-12 00:11:05,531 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61632, 2026-02-10)
+2026-02-12 00:11:05,764 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-10 "HTTP/1.1 200 OK"
+2026-02-12 00:11:05,765 - db.supabase_client - INFO - Marked journey as completed: (61632, 2026-02-10)
+2026-02-12 00:11:05,769 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61631, 2026-02-06), flag=0
+2026-02-12 00:11:06,029 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61631 "HTTP/1.1 200 OK"
+2026-02-12 00:11:06,030 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-06', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:06,748 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:06,748 - services.phase2_ongoing_journeys - INFO - Journey completed: (61631, 2026-02-06)
+2026-02-12 00:11:06,748 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:07,030 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:07,269 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:07,499 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:07,723 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:07,975 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:08,219 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:08,488 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:08,750 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:08,964 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:09,182 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:09,419 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:10,054 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:10,331 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:10,544 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:10,844 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:11,088 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:11,089 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61631, 2026-02-06)
+2026-02-12 00:11:11,090 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61631, 2026-02-06)
+2026-02-12 00:11:11,356 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61631&journey_date=eq.2026-02-06 "HTTP/1.1 200 OK"
+2026-02-12 00:11:11,359 - db.supabase_client - INFO - Marked journey as completed: (61631, 2026-02-06)
+2026-02-12 00:11:11,362 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-09), flag=0
+2026-02-12 00:11:11,561 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:11:11,562 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-09', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:11,797 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:11,797 - services.phase2_ongoing_journeys - INFO - Journey completed: (11605, 2026-02-09)
+2026-02-12 00:11:11,798 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:11:11,968 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:12,174 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:12,381 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:12,607 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:12,850 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:13,198 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:13,440 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:13,442 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11605, 2026-02-09)
+2026-02-12 00:11:13,442 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11605, 2026-02-09)
+2026-02-12 00:11:13,710 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-09 "HTTP/1.1 200 OK"
+2026-02-12 00:11:13,712 - db.supabase_client - INFO - Marked journey as completed: (11605, 2026-02-09)
+2026-02-12 00:11:13,717 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-08), flag=0
+2026-02-12 00:11:14,017 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:11:14,019 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-08', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:14,418 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:11:14,418 - services.phase2_ongoing_journeys - INFO - Journey completed: (61632, 2026-02-08)
+2026-02-12 00:11:14,418 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:14,664 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:14,934 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:15,148 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:15,450 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:15,670 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:15,963 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:16,256 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:16,578 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:16,883 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:17,137 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:17,397 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:17,704 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:18,011 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:18,221 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:18,523 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:18,801 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:18,802 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61632, 2026-02-08)
+2026-02-12 00:11:18,802 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61632, 2026-02-08)
+2026-02-12 00:11:19,044 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-08 "HTTP/1.1 200 OK"
+2026-02-12 00:11:19,047 - db.supabase_client - INFO - Marked journey as completed: (61632, 2026-02-08)
+2026-02-12 00:11:19,049 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61631, 2026-02-09), flag=0
+2026-02-12 00:11:19,303 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61631 "HTTP/1.1 200 OK"
+2026-02-12 00:11:19,304 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-09', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:19,588 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:19,588 - services.phase2_ongoing_journeys - INFO - Journey completed: (61631, 2026-02-09)
+2026-02-12 00:11:19,588 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:19,855 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:20,161 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:20,408 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:20,653 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:20,980 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:21,196 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:21,427 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:21,667 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:21,977 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:22,210 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:22,516 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:22,825 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:23,132 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:23,438 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:23,745 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:24,053 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:24,054 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61631, 2026-02-09)
+2026-02-12 00:11:24,055 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61631, 2026-02-09)
+2026-02-12 00:11:24,294 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61631&journey_date=eq.2026-02-09 "HTTP/1.1 200 OK"
+2026-02-12 00:11:24,295 - db.supabase_client - INFO - Marked journey as completed: (61631, 2026-02-09)
+2026-02-12 00:11:24,299 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-06), flag=0
+2026-02-12 00:11:24,518 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:11:24,519 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-06', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:24,875 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:24,875 - services.phase2_ongoing_journeys - INFO - Journey completed: (11605, 2026-02-06)
+2026-02-12 00:11:24,875 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:11:25,179 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:25,429 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:25,690 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:25,912 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:26,203 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:26,439 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:26,694 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:26,695 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11605, 2026-02-06)
+2026-02-12 00:11:26,695 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11605, 2026-02-06)
+2026-02-12 00:11:26,942 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-06 "HTTP/1.1 200 OK"
+2026-02-12 00:11:26,944 - db.supabase_client - INFO - Marked journey as completed: (11605, 2026-02-06)
+2026-02-12 00:11:26,947 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-09), flag=0
+2026-02-12 00:11:27,167 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:11:27,168 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-09', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:27,406 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:11:27,406 - services.phase2_ongoing_journeys - INFO - Journey completed: (61632, 2026-02-09)
+2026-02-12 00:11:27,407 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:27,637 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:27,944 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:28,252 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:28,558 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:28,865 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:29,105 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:29,341 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:29,581 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:29,832 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:30,096 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:30,319 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:30,528 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:30,758 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:30,998 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:31,244 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:31,504 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:31,507 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61632, 2026-02-09)
+2026-02-12 00:11:31,509 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61632, 2026-02-09)
+2026-02-12 00:11:31,744 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-09 "HTTP/1.1 200 OK"
+2026-02-12 00:11:31,744 - db.supabase_client - INFO - Marked journey as completed: (61632, 2026-02-09)
+2026-02-12 00:11:31,749 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-10), flag=0
+2026-02-12 00:11:31,970 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:11:31,971 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-10', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:32,411 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:32,413 - services.phase2_ongoing_journeys - INFO - Journey completed: (11605, 2026-02-10)
+2026-02-12 00:11:32,414 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:11:32,663 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:32,895 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:33,122 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:33,372 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:33,567 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:33,793 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:34,088 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:34,090 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11605, 2026-02-10)
+2026-02-12 00:11:34,090 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11605, 2026-02-10)
+2026-02-12 00:11:34,396 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-10 "HTTP/1.1 200 OK"
+2026-02-12 00:11:34,398 - db.supabase_client - INFO - Marked journey as completed: (11605, 2026-02-10)
+2026-02-12 00:11:34,405 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61631, 2026-02-08), flag=0
+2026-02-12 00:11:34,651 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61631 "HTTP/1.1 200 OK"
+2026-02-12 00:11:34,653 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-08', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:34,904 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:34,905 - services.phase2_ongoing_journeys - INFO - Journey completed: (61631, 2026-02-08)
+2026-02-12 00:11:34,906 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:35,217 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:35,521 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:35,829 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:36,077 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:36,341 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:36,581 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:36,856 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:37,159 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:37,404 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:37,615 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:37,878 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:38,183 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:38,427 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:38,695 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:38,912 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:39,131 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:39,132 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61631, 2026-02-08)
+2026-02-12 00:11:39,132 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61631, 2026-02-08)
+2026-02-12 00:11:39,378 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61631&journey_date=eq.2026-02-08 "HTTP/1.1 200 OK"
+2026-02-12 00:11:39,381 - db.supabase_client - INFO - Marked journey as completed: (61631, 2026-02-08)
+2026-02-12 00:11:39,389 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61631, 2026-02-10), flag=0
+2026-02-12 00:11:39,649 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61631 "HTTP/1.1 200 OK"
+2026-02-12 00:11:39,650 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-10', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:39,931 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:39,931 - services.phase2_ongoing_journeys - INFO - Journey completed: (61631, 2026-02-10)
+2026-02-12 00:11:39,932 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:40,233 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:40,541 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:40,846 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:41,154 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:41,403 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:41,665 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:41,876 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:42,094 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:42,382 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:42,691 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:42,952 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:43,195 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:43,398 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:43,612 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:43,817 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:44,004 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:44,006 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61631, 2026-02-10)
+2026-02-12 00:11:44,006 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61631, 2026-02-10)
+2026-02-12 00:11:44,227 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61631&journey_date=eq.2026-02-10 "HTTP/1.1 200 OK"
+2026-02-12 00:11:44,230 - db.supabase_client - INFO - Marked journey as completed: (61631, 2026-02-10)
+2026-02-12 00:11:44,236 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-06), flag=0
+2026-02-12 00:11:44,502 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:11:44,504 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-06', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:44,760 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:11:44,761 - services.phase2_ongoing_journeys - INFO - Journey completed: (61632, 2026-02-06)
+2026-02-12 00:11:44,761 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:45,046 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:45,352 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:45,577 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:45,790 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:46,038 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:46,283 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:46,581 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:46,888 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:47,197 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:47,504 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:47,727 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:48,015 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:48,269 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:48,528 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:48,736 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:48,960 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:48,961 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61632, 2026-02-06)
+2026-02-12 00:11:48,961 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61632, 2026-02-06)
+2026-02-12 00:11:49,192 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-06 "HTTP/1.1 200 OK"
+2026-02-12 00:11:49,195 - db.supabase_client - INFO - Marked journey as completed: (61632, 2026-02-06)
+2026-02-12 00:11:49,208 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11606, 2026-02-07), flag=0
+2026-02-12 00:11:49,444 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11606 "HTTP/1.1 200 OK"
+2026-02-12 00:11:49,445 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-07', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:49,864 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:11:49,865 - services.phase2_ongoing_journeys - INFO - Journey completed: (11606, 2026-02-07)
+2026-02-12 00:11:49,865 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:11:50,108 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:50,370 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:50,638 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:50,882 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:51,191 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:51,497 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:51,747 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:51,749 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11606, 2026-02-07)
+2026-02-12 00:11:51,751 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11606, 2026-02-07)
+2026-02-12 00:11:52,009 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11606&journey_date=eq.2026-02-07 "HTTP/1.1 200 OK"
+2026-02-12 00:11:52,010 - db.supabase_client - INFO - Marked journey as completed: (11606, 2026-02-07)
+2026-02-12 00:11:52,019 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-08), flag=0
+2026-02-12 00:11:52,228 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:11:52,229 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-08', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:52,774 - api.railradar - INFO - Journey completed (Format 2)! Current: BINA == Destination: BINA
+2026-02-12 00:11:52,775 - services.phase2_ongoing_journeys - INFO - Journey completed: (11605, 2026-02-08)
+2026-02-12 00:11:52,776 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:11:53,032 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:53,340 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:53,647 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:53,874 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:54,158 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:54,382 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:54,671 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:54,673 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11605, 2026-02-08)
+2026-02-12 00:11:54,673 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11605, 2026-02-08)
+2026-02-12 00:11:54,930 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-08 "HTTP/1.1 200 OK"
+2026-02-12 00:11:54,931 - db.supabase_client - INFO - Marked journey as completed: (11605, 2026-02-08)
+2026-02-12 00:11:54,937 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-07), flag=0
+2026-02-12 00:11:55,166 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:11:55,167 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-07', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:11:55,549 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:11:55,550 - services.phase2_ongoing_journeys - INFO - Journey completed: (61632, 2026-02-07)
+2026-02-12 00:11:55,550 - api.railradar - INFO - Extracted 16 stations from route data (Format 2)
+2026-02-12 00:11:55,900 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:56,119 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:56,413 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:56,650 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:56,895 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:57,232 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:57,466 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:57,743 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:58,026 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:58,267 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:58,563 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:58,870 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:59,099 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:59,382 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:11:59,627 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:00,255 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:00,256 - db.supabase_client - INFO - Inserted 16/16 stations for journey (61632, 2026-02-07)
+2026-02-12 00:12:00,257 - services.phase2_ongoing_journeys - INFO - Inserted 16 station records for (61632, 2026-02-07)
+2026-02-12 00:12:00,460 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-07 "HTTP/1.1 200 OK"
+2026-02-12 00:12:00,462 - db.supabase_client - INFO - Marked journey as completed: (61632, 2026-02-07)
+2026-02-12 00:12:00,467 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11606, 2026-02-06), flag=0
+2026-02-12 00:12:00,714 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11606 "HTTP/1.1 200 OK"
+2026-02-12 00:12:00,715 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-06', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:12:01,260 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:12:01,261 - services.phase2_ongoing_journeys - INFO - Journey completed: (11606, 2026-02-06)
+2026-02-12 00:12:01,261 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:12:01,511 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:01,840 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:02,146 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:02,376 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:02,658 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:02,899 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:03,172 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:03,172 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11606, 2026-02-06)
+2026-02-12 00:12:03,173 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11606, 2026-02-06)
+2026-02-12 00:12:03,478 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11606&journey_date=eq.2026-02-06 "HTTP/1.1 200 OK"
+2026-02-12 00:12:03,479 - db.supabase_client - INFO - Marked journey as completed: (11606, 2026-02-06)
+2026-02-12 00:12:03,483 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11606, 2026-02-09), flag=0
+2026-02-12 00:12:03,785 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11606 "HTTP/1.1 200 OK"
+2026-02-12 00:12:03,787 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-09', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:12:04,094 - api.railradar - INFO - Journey completed (Format 2)! Current: BPL == Destination: BPL
+2026-02-12 00:12:04,095 - services.phase2_ongoing_journeys - INFO - Journey completed: (11606, 2026-02-09)
+2026-02-12 00:12:04,095 - api.railradar - INFO - Extracted 7 stations from route data (Format 2)
+2026-02-12 00:12:04,397 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:04,707 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:04,938 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:05,120 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:05,305 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:05,528 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:05,834 - httpx - INFO - HTTP Request: POST https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/rail_data "HTTP/1.1 201 Created"
+2026-02-12 00:12:05,835 - db.supabase_client - INFO - Inserted 7/7 stations for journey (11606, 2026-02-09)
+2026-02-12 00:12:05,836 - services.phase2_ongoing_journeys - INFO - Inserted 7 station records for (11606, 2026-02-09)
+2026-02-12 00:12:06,140 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11606&journey_date=eq.2026-02-09 "HTTP/1.1 200 OK"
+2026-02-12 00:12:06,141 - db.supabase_client - INFO - Marked journey as completed: (11606, 2026-02-09)
+2026-02-12 00:12:06,144 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61631, 2026-02-12), flag=0
+2026-02-12 00:12:06,448 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61631 "HTTP/1.1 200 OK"
+2026-02-12 00:12:06,450 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61631 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:12:07,394 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=flag&train_no=eq.61631&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:07,636 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61631&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:07,637 - db.supabase_client - INFO - Incremented flag for (61631, 2026-02-12): 0 -> 1
+2026-02-12 00:12:07,637 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11605, 2026-02-12), flag=0
+2026-02-12 00:12:07,880 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11605 "HTTP/1.1 200 OK"
+2026-02-12 00:12:08,659 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11605 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:12:09,225 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=flag&train_no=eq.11605&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:09,473 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11605&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:09,474 - db.supabase_client - INFO - Incremented flag for (11605, 2026-02-12): 0 -> 1
+2026-02-12 00:12:09,474 - services.phase2_ongoing_journeys - INFO - Tracking journey: (11606, 2026-02-12), flag=0
+2026-02-12 00:12:09,725 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.11606 "HTTP/1.1 200 OK"
+2026-02-12 00:12:10,480 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/11606 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:12:11,382 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=flag&train_no=eq.11606&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:11,670 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.11606&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:11,674 - db.supabase_client - INFO - Incremented flag for (11606, 2026-02-12): 0 -> 1
+2026-02-12 00:12:11,675 - services.phase2_ongoing_journeys - INFO - Tracking journey: (61632, 2026-02-12), flag=0
+2026-02-12 00:12:11,977 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/train_info?select=destination_station_code&train_no=eq.61632 "HTTP/1.1 200 OK"
+2026-02-12 00:12:12,243 - api.railradar - INFO - Request: GET https://api.railradar.in/api/v1/trains/61632 with params={'journeyDate': '2026-02-12', 'dataType': 'live', 'dataProvider': 'railradar', 'userId': ''}
+2026-02-12 00:12:13,309 - httpx - INFO - HTTP Request: GET https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?select=flag&train_no=eq.61632&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:13,616 - httpx - INFO - HTTP Request: PATCH https://cjnceqnctjpcqinvxfwg.supabase.co/rest/v1/journey_status_flags?train_no=eq.61632&journey_date=eq.2026-02-12 "HTTP/1.1 200 OK"
+2026-02-12 00:12:13,617 - db.supabase_client - INFO - Incremented flag for (61632, 2026-02-12): 0 -> 1
+2026-02-12 00:12:13,618 - services.phase2_ongoing_journeys - INFO - Phase 2 completed: {'journeys_tracked': 26, 'completed': 22, 'abandoned': 0, 'still_ongoing': 4, 'api_errors': 0}
+2026-02-12 00:12:13,619 - __main__ - INFO - Phase 2 completed: {'journeys_tracked': 26, 'completed': 22, 'abandoned': 0, 'still_ongoing': 4, 'api_errors': 0}
+2026-02-12 00:12:13,620 - __main__ - INFO - ======================================================================
+2026-02-12 00:12:13,620 - __main__ - INFO - ONE-DAY TRAIN POLLING COMPLETED SUCCESSFULLY
+2026-02-12 00:12:13,621 - __main__ - INFO - Execution Time: 105.66 seconds
+2026-02-12 00:12:13,621 - __main__ - INFO - Phase 1: {'trains_checked': 4, 'new_journeys_detected': 4, 'api_errors': 0, 'already_tracked': 0}
+2026-02-12 00:12:13,622 - __main__ - INFO - Phase 2: {'journeys_tracked': 26, 'completed': 22, 'abandoned': 0, 'still_ongoing': 4, 'api_errors': 0}
+2026-02-12 00:12:13,622 - __main__ - INFO - ======================================================================
