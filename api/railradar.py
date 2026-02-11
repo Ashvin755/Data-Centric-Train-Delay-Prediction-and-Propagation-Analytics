@@ -2,19 +2,23 @@
 RailRadar API client for fetching train data.
 
 Provides functions to interact with RailRadar API and validate journey data.
+Uses cloudscraper to bypass Cloudflare protection on GitHub Actions.
 """
 
 import logging
-import requests
+import time
+import cloudscraper
 from typing import Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class RailRadarAPI:
-    """Client for RailRadar API interactions."""
+    """Client for RailRadar API interactions with Cloudflare bypass."""
     
     BASE_URL = "https://api.railradar.in/api/v1/trains"
+    MAX_RETRIES = 3
+    RETRY_DELAY = 2  # seconds
     
     def __init__(self, api_key: str):
         """
@@ -24,18 +28,35 @@ class RailRadarAPI:
             api_key: RailRadar API key
         """
         self.api_key = api_key
-        self.headers = {
-            "Accept": "*/*",
-            "X-API-Key": api_key
-        }
+        
+        # Create cloudscraper session (bypasses Cloudflare)
+        self.scraper = cloudscraper.create_scraper(
+            browser={
+                'browser': 'chrome',
+                'platform': 'windows',
+                'mobile': False
+            }
+        )
+        
+        # Browser-like headers to avoid bot detection
+        self.scraper.headers.update({
+            "X-API-Key": api_key,
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://railradar.in/",
+            "Origin": "https://railradar.in",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        })
+        
         # Log masked API key for debugging
         masked_key = api_key[:10] + "***" + api_key[-5:] if len(api_key) > 15 else "***"
         logger.info(f"RailRadar API client initialized with key: {masked_key}")
+        logger.info("Using cloudscraper for Cloudflare bypass")
     
     def get_train_data(self, train_number: int, journey_date: str, 
                        data_type: str = "live") -> Optional[Dict[str, Any]]:
         """
-        Fetch train data from RailRadar API.
+        Fetch train data from RailRadar API with retry logic.
         
         Args:
             train_number: 5-digit train number
@@ -53,57 +74,67 @@ class RailRadarAPI:
             "userId": ""  # Required parameter (can be empty string)
         }
         
-        try:
-            logger.debug(f"Calling RailRadar API: train={train_number}, date={journey_date}, type={data_type}")
-            logger.debug(f"URL: {url}")
-            logger.debug(f"Params: {params}")
-            logger.debug(f"Headers: {{'Accept': '{self.headers.get('Accept')}', 'X-API-Key': '{self.headers.get('X-API-Key')[:10]}***{self.headers.get('X-API-Key')[-5:]}'}}")
-            logger.info(f"Full request: requests.get('{url}', headers={{'X-API-Key': '***'}}, params={params})")
-            response = requests.get(url, headers=self.headers, params=params, timeout=10)
-            logger.debug(f"Response status: {response.status_code}")
-            logger.debug(f"Response headers: {dict(response.headers)}")
-            response.raise_for_status()
+        # Retry loop for transient failures
+        for attempt in range(1, self.MAX_RETRIES + 1):
+            try:
+                logger.debug(f"Calling RailRadar API (attempt {attempt}/{self.MAX_RETRIES}): train={train_number}, date={journey_date}")
+                logger.info(f"Request: GET {url} with params={params}")
+                
+                response = self.scraper.get(url, params=params, timeout=15)
+                logger.debug(f"Response status: {response.status_code}")
+                
+                # Check for Cloudflare challenge page
+                if "Just a moment" in response.text or "cloudflare" in response.text.lower():
+                    logger.warning(f"Cloudflare challenge detected on attempt {attempt}")
+                    if attempt < self.MAX_RETRIES:
+                        logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
+                        time.sleep(self.RETRY_DELAY)
+                        continue
+                    else:
+                        logger.error("Max retries reached, Cloudflare still blocking")
+                        return None
+                
+                response.raise_for_status()
+                
+                data = response.json()
+                
+                # Validate response structure
+                if "data" not in data:
+                    logger.warning(f"Invalid API response structure for train {train_number}")
+                    logger.debug(f"Response keys: {data.keys() if isinstance(data, dict) else type(data)}")
+                    return None
+                
+                logger.info(f"✅ Successfully fetched data for train {train_number}")
+                inner_data = data.get("data", {})
+                return inner_data
             
-            data = response.json()
+            except cloudscraper.exceptions.CloudflareChallengeError as e:
+                logger.error(f"Cloudflare challenge failed on attempt {attempt}: {e}")
+                if attempt < self.MAX_RETRIES:
+                    logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
+                    time.sleep(self.RETRY_DELAY)
+                else:
+                    logger.error("Max retries reached for Cloudflare challenge")
+                    return None
             
-            # Validate response structure
-            if "data" not in data:
-                logger.warning(f"Invalid API response structure for train {train_number}")
-                logger.debug(f"Response keys: {data.keys() if isinstance(data, dict) else type(data)}")
-                return None
-            
-            logger.info(f"Successfully fetched data for train {train_number}")
-            inner_data = data.get("data", {})
-            logger.debug(f"Response data keys: {inner_data.keys() if isinstance(inner_data, dict) else type(inner_data)}")
-            return inner_data
+            except Exception as e:
+                error_type = type(e).__name__
+                logger.error(f"{error_type} for train {train_number} on attempt {attempt}: {e}")
+                
+                # Log response details if available
+                if 'response' in locals():
+                    logger.error(f"Response status: {response.status_code}")
+                    logger.error(f"Response text (first 500 chars): {response.text[:500]}")
+                
+                # Retry on transient errors
+                if attempt < self.MAX_RETRIES and error_type in ['Timeout', 'ConnectionError', 'HTTPError']:
+                    logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
+                    time.sleep(self.RETRY_DELAY)
+                else:
+                    logger.error(f"Max retries reached or non-retryable error ({error_type})")
+                    return None
         
-        except requests.exceptions.Timeout:
-            logger.error(f"API timeout for train {train_number}")
-            logger.debug(f"URL: {url}, Params: {params}")
-            return None
-        
-        except requests.exceptions.HTTPError as e:
-            logger.error(f"HTTP error for train {train_number}: {e}")
-            logger.error(f"Response status: {response.status_code if 'response' in locals() else 'N/A'}")
-            logger.error(f"Response text: {response.text if 'response' in locals() else 'N/A'}")
-            logger.error(f"URL: {url}")
-            logger.error(f"Params: {params}")
-            logger.error(f"Headers sent: {{'Accept': '{self.headers.get('Accept')}', 'X-API-Key': '{self.headers.get('X-API-Key')[:10]}***{self.headers.get('X-API-Key')[-5:]}'}}")
-            logger.error(f"Full API key length: {len(self.headers.get('X-API-Key', ''))}")
-            logger.error(f"Request headers from response: {dict(response.request.headers) if 'response' in locals() else 'N/A'}")
-            return None
-        
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Request error for train {train_number}: {e}")
-            return None
-        
-        except ValueError as e:
-            logger.error(f"JSON decode error for train {train_number}: {e}")
-            return None
-        
-        except Exception as e:
-            logger.error(f"Unexpected error for train {train_number}: {e}")
-            return None
+        return None
     
     def is_journey_started(self, api_response: Dict[str, Any], 
                           expected_date: str) -> bool:
