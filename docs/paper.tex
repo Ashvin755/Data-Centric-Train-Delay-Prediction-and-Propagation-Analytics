@@ -8,7 +8,7 @@
 \usepackage{booktabs}
 \usepackage{cite}
 
-\title{Indian Railways Delay Dataset: A Real-Time Data Collection System for Train Performance Analysis}
+\title{A Real-Time Data Collection System for Train Performance Analysis}
 
 \author{
     Arjun Sarje \\
@@ -110,6 +110,10 @@ Our data collection system employs a stateless, cloud-based architecture designe
 
 This stateless design ensures resilience to service interruptions while maintaining data consistency through database-driven state management.
 
+\subsection{RailRadar API Overview}
+
+RailRadar is a comprehensive live train tracking platform for Indian Railways, providing real-time location data, delay information, and schedule details for over 13,000 trains across 10,000+ stations \cite{railradar_about}. The platform aggregates data through multiple sources including continuous web scraping of third-party railway information websites, Google Maps integration for train positioning validation, and manual database updates by their team. RailRadar operates independently of official government entities (NTES, Indian Railways), employing advanced error recovery and cross-verification systems to ensure data accuracy. Their RESTful API provides programmatic access to real-time train status, station information, and historical schedule data, enabling automated data collection systems like ours.
+
 \subsection{Data Collection Workflow}
 
 Our system implements a dual-phase polling strategy to efficiently track journey lifecycles:
@@ -190,15 +194,15 @@ This stratification enables comparative analysis between short-haul and long-hau
 11605 & Bhopal - Bina MEMU Express & one\_day & BINA & 2 \\
 11606 & Bina - Bhopal MEMU Express & one\_day & BPL & 2 \\
 61632 & Bina - Bhopal MEMU & one\_day & BPL & 3 \\
-12137 & Punjab Mail (PT) & multiple\_day & FZR & 33 \\
+12137 & Punjab Mail & multiple\_day & FZR & 33 \\
 12138 & Punjab Mail & multiple\_day & CSMT & 33 \\
-11077 & Jhelum Express (PT) & multiple\_day & JAT & 40 \\
+11077 & Jhelum Express  & multiple\_day & JAT & 40 \\
 11078 & Jhelum Express & multiple\_day & PUNE & 40 \\
-18237 & Chhattisgarh Express (PT) & multiple\_day & ASR & 43 \\
-18238 & Chhattisgarh Express (PT) & multiple\_day & BSP & 42 \\
+18237 & Chhattisgarh Express & multiple\_day & ASR & 43 \\
+18238 & Chhattisgarh Express & multiple\_day & BSP & 42 \\
 \bottomrule
 \end{tabular}
-\caption{Complete list of 10 trains monitored in the dataset: 4 single-day MEMU trains (2-3 hour journeys) and 6 multi-day express trains (33-43 hour long-distance journeys). PT indicates partial terminus.}
+\caption{Complete list of 10 trains monitored in the dataset: 4 single-day MEMU trains (2-3 hour journeys) and 6 multi-day express trains (33-43 hour long-distance journeys).}
 \label{tab:train_info}
 \end{table*}
 
@@ -419,55 +423,9 @@ The complete dataset, collection system source code, and documentation will be p
 
 \section*{Acknowledgments}
 
-We thank Samrat Ashok Technological Institute, Vidisha for supporting this research. We also acknowledge RailRadar for providing API access enabling this data collection effort.
+This research was conducted under the guidance of Dr. Rashi Kumari, Assistant Professor, Department of Artificial Intelligence, Samrat Ashok Technological Institute, Vidisha.
 
-\begin{thebibliography}{99}
-
-\bibitem{indian_railways_stats}
-Ministry of Railways, Government of India.
-\textit{Indian Railways Year Book 2024-25}.
-Railway Board, New Delhi, 2025.
-
-\bibitem{uk_rail_data}
-Network Rail.
-\textit{Network Rail Open Data Feeds}.
-\url{https://www.networkrail.co.uk/who-we-are/transparency-and-ethics/transparency/open-data-feeds/}, 2024.
-
-\bibitem{german_rail_data}
-Deutsche Bahn AG.
-\textit{DB Open Data Portal}.
-\url{https://data.deutschebahn.com/}, 2024.
-
-\bibitem{oneto2018train}
-L. Oneto, E. Fumeo, G. Clerico, R. Canepa, F. Papa, C. Dambra, N. Mazzino, and D. Anguita.
-\textit{Train delay prediction systems: a Big Data Analytics perspective}.
-Big Data Research, 11:54-64, 2018.
-
-\bibitem{flier2009delay}
-H. Flier, T. Graffagnino, and A. Nunkesser.
-\textit{Forecasting train delays using delay distributions}.
-In Proceedings of the 9th Workshop on Algorithmic Approaches for Transportation Modelling, Optimization, and Systems (ATMOS), 2009.
-
-\bibitem{goverde2010railway}
-R. M. P. Goverde.
-\textit{A delay propagation algorithm for large-scale railway traffic networks}.
-Transportation Research Part C: Emerging Technologies, 18(3):269-287, 2010.
-
-\bibitem{tomii2005train}
-N. Tomii.
-\textit{Train rescheduling algorithm which minimizes passengers' dissatisfaction}.
-In Innovations in Freight and Passenger Rail Systems, pages 1-17. Springer, 2005.
-
-\bibitem{india_survey_example}
-P. K. Jain and S. Singh.
-\textit{Assessment of Train Delays and Passenger Satisfaction: A Survey Study}.
-Journal of Transportation Engineering (hypothetical reference), 12(3):45-58, 2023.
-
-\bibitem{india_simulation_example}
-R. Kumar and A. Sharma.
-\textit{Simulation-based Analysis of Indian Railway Operations}.
-International Journal of Railway Research (hypothetical reference), 8(2):112-125, 2022.
-
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}
