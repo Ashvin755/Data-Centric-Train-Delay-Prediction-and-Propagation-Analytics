@@ -99,16 +99,15 @@ Our work directly addresses these gaps by providing an open, automated, and cont
 
 \subsection{System Architecture}
 
-Our data collection system employs a stateless, cloud-based architecture designed for reliability and scalability (Figure \ref{fig:architecture}). The system architecture consists of four primary components:
+Our data collection system employs a serverless, cloud-based architecture designed for reliability, scalability, and cost-efficiency (Figure \ref{fig:architecture}). The system architecture consists of three primary components:
 
 \begin{enumerate}
-    \item \textbf{External Scheduler}: UptimeRobot triggers HTTP polling endpoints at configurable intervals (5 hours for single-day trains, 12 hours for multi-day trains)
-    \item \textbf{Web Service}: Flask application deployed on Render's free tier processes polling requests
-    \item \textbf{Data Source}: RailRadar API provides real-time train location and delay information
+    \item \textbf{Automated Scheduler \& Executor}: GitHub Actions workflows with cron-based triggers execute Python polling scripts at configurable intervals (every 5 hours for single-day trains, every 12 hours for multi-day trains) on ephemeral Ubuntu runners
+    \item \textbf{Data Source}: RailRadar API provides real-time train location and delay information via RESTful endpoints
     \item \textbf{Persistent Storage}: Supabase PostgreSQL database stores journey metadata and station-level records
 \end{enumerate}
 
-This stateless design ensures resilience to service interruptions while maintaining data consistency through database-driven state management.
+This serverless design eliminates the need for persistent web hosting infrastructure while ensuring data consistency through database-driven state management. GitHub Actions provides free computational resources for public repositories and reliable scheduled execution, making it ideal for periodic data collection tasks. Each workflow run operates independently, with all state persisted in the database, ensuring resilience to execution failures and enabling transparent audit trails through workflow logs.
 
 \subsection{RailRadar API Overview}
 

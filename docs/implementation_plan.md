@@ -13,13 +13,13 @@ Build a stateless Flask web service deployed on Render that collects Indian Rail
 
 ```mermaid
 graph TB
-    subgraph External["External Services"]
-        UR[UptimeRobot<br/>Cron Scheduler]
-    end
-    
-    subgraph Render["Render Free Tier"]
-        EP1["/poll/one-day<br/>Endpoint"]
-        EP2["/poll/multi-day<br/>Endpoint"]
+    subgraph GitHub["GitHub Actions"]
+        CRON1[Cron Schedule<br/>Every 5 hours]
+        CRON2[Cron Schedule<br/>Every 12 hours]
+        WF1[one-day-poll.yml<br/>Workflow]
+        WF2[multi-day-poll.yml<br/>Workflow]
+        SCRIPT1[run_one_day_poll.py<br/>Python Script]
+        SCRIPT2[run_multi_day_poll.py<br/>Python Script]
     end
     
     subgraph RailRadar["RailRadar API"]
@@ -33,23 +33,28 @@ graph TB
         RD[(rail_data<br/>Final Dataset)]
     end
     
-    UR -->|Every 5h| EP1
-    UR -->|Every 12h| EP2
+    CRON1 -->|Trigger| WF1
+    CRON2 -->|Trigger| WF2
+    WF1 -->|Execute| SCRIPT1
+    WF2 -->|Execute| SCRIPT2
     
-    EP1 -->|API Key 1| RR1
-    EP2 -->|API Key 2| RR2
+    SCRIPT1 -->|API Key 1| RR1
+    SCRIPT2 -->|API Key 2| RR2
     
-    EP1 --> TI
-    EP1 --> JSF
-    EP1 --> RD
+    SCRIPT1 --> TI
+    SCRIPT1 --> JSF
+    SCRIPT1 --> RD
     
-    EP2 --> TI
-    EP2 --> JSF
-    EP2 --> RD
+    SCRIPT2 --> TI
+    SCRIPT2 --> JSF
+    SCRIPT2 --> RD
     
-    style UR fill:#f9f,stroke:#333,stroke-width:2px
-    style EP1 fill:#bbf,stroke:#333,stroke-width:2px
-    style EP2 fill:#bbf,stroke:#333,stroke-width:2px
+    style CRON1 fill:#f9f,stroke:#333,stroke-width:2px
+    style CRON2 fill:#f9f,stroke:#333,stroke-width:2px
+    style WF1 fill:#bbf,stroke:#333,stroke-width:2px
+    style WF2 fill:#bbf,stroke:#333,stroke-width:2px
+    style SCRIPT1 fill:#e1f5ff,stroke:#333,stroke-width:2px
+    style SCRIPT2 fill:#e1f5ff,stroke:#333,stroke-width:2px
     style TI fill:#bfb,stroke:#333,stroke-width:2px
     style JSF fill:#bfb,stroke:#333,stroke-width:2px
     style RD fill:#bfb,stroke:#333,stroke-width:2px
@@ -64,6 +69,13 @@ graph TB
 ```mermaid
 stateDiagram-v2
     [*] --> NotTracked: Train not in system
+    
+    state "InProgress<br/>────────────<br/>Each poll cycle:<br/>• Call RailRadar API<br/>• Check completion status<br/>• Update flag counter<br/>• Update last_checked_at" as InProgress
+    
+    state "Completed<br/>────────────<br/>Final state:<br/>• is_completed = true<br/>• Extract liveData.route[]<br/>• Insert station rows<br/>• Never poll again" as Completed
+    
+    state "Abandoned<br/>────────────<br/>Final state:<br/>• is_abandoned = true<br/>• No rail_data entries<br/>• Never poll again" as Abandoned
+    
     NotTracked --> InProgress: Journey starts today<br/>(API confirms departure)
     InProgress --> Completed: Arrived at destination<br/>(currentLocation == destination)
     InProgress --> InProgress: Still traveling<br/>(increment flag)
@@ -72,28 +84,10 @@ stateDiagram-v2
     Completed --> [*]: Data written to rail_data
     Abandoned --> [*]: No data written
     
-    note right of InProgress
-        Each poll cycle:
-        - Call RailRadar API
-        - Check completion status
-        - Update flag counter
-        - Update last_checked_at
-    end note
-    
-    note right of Completed
-        Final state:
-        - is_completed = true
-        - Extract liveData.route[]
-        - Insert station rows
-        - Never poll again
-    end note
-    
-    note right of Abandoned
-        Final state:
-        - is_abandoned = true
-        - No rail_data entries
-        - Never poll again
-    end note
+    style NotTracked fill:#e8e8e8,stroke:#333,stroke-width:3px,color:#000
+    style InProgress fill:#bbdefb,stroke:#1976d2,stroke-width:3px,color:#000
+    style Completed fill:#c8e6c9,stroke:#388e3c,stroke-width:3px,color:#000
+    style Abandoned fill:#ffcdd2,stroke:#c62828,stroke-width:3px,color:#000
 ```
 
 ---
