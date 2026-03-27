@@ -31,32 +31,35 @@ Vidisha, Madhya Pradesh, India \\
 ashvin27ai023@satiengg.in}
 }
 
+
 \maketitle
 
 \begin{abstract}
-Indian Railways, one of the world's largest railway networks, faces persistent challenges with train delays affecting millions of passengers daily. Despite its significance, there exists no publicly available real-time or historical dataset capturing granular delay information across the network. This paper introduces a novel automated data collection system and dataset documenting train delays, station-wise arrival/departure times, and journey lifecycle information for Indian Railways. Our system leverages the RailRadar API to collect real-time data for 10 trains (4 single-day and 6 multi-day journeys) over a 4-month period, yielding approximately 15,000 station-level records. The dataset includes scheduled and actual timestamps, delay measurements, and distance metrics for comprehensive journey analysis. This publicly accessible dataset enables research in delay prediction, schedule optimization, and passenger information systems—domains previously constrained by data unavailability. We describe our methodology, discuss inherent biases in real-time data collection, and outline future applications in machine learning and transportation analytics.
+Indian Railways is among the largest rail transportation systems globally, yet the ecosystem lacks an open, high-granularity, machine-learning-ready corpus for real-time delay analysis at station resolution. We present an automated, serverless data engineering pipeline that performs periodic polling of a live RailRadar REST API, orchestrated via GitHub Actions cron workflows, and persists normalized journey-state and station-event records in Supabase PostgreSQL. The system tracks end-to-end journey lifecycles for both single-day and multi-day services using a state-driven completion framework with failure-tolerant retry logic and idempotent storage constraints. Over an initial 1-month collection period (January 2026), with collection planned through April 2026, the pipeline monitors 10 representative trains (4 single-day, 6 multi-day) and captures approximately 15,000 station-level observations, including scheduled and observed arrival/departure timestamps, delay variables, and cumulative distance features. We formalize the collection methodology, schema design, and data-quality controls, and discuss sampling/operational biases inherent to API-mediated telemetry. The resulting open dataset establishes a reproducible benchmark for delay propagation modeling, ETA forecasting, timetable robustness analysis, and passenger information optimization in the Indian Railways context.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Indian Railways, train delay prediction, real-time data collection, transportation analytics, delay dataset, RailRadar API, journey tracking
+Indian Railways, railway delay analytics, real-time data pipeline, serverless architecture, GitHub Actions, cron scheduling, RESTful API ingestion, Supabase PostgreSQL, journey state tracking, delay propagation modeling, ETA prediction, transportation data engineering, reproducible dataset
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-Indian Railways operates one of the world's most extensive railway networks, serving over 8 billion passengers annually across 68,000 kilometers of track \cite{indian_railways_stats}. Train delays constitute a major operational challenge, impacting passenger experience, freight logistics, and overall network efficiency. Understanding delay patterns is crucial for predictive analytics, resource allocation, and service improvement initiatives.
+Indian Railways operates one of the world's largest rail networks, serving over 8 billion passengers annually across approximately 68,000 km of track \cite{indian_railways_stats}. In such high-density, tightly coupled transportation systems, delay accumulation and propagation are not merely operational inconveniences; they are system-level phenomena that affect rolling-stock utilization, crew and platform scheduling, downstream connectivity, freight movement, and passenger reliability metrics. Consequently, robust delay modeling requires longitudinal, station-level, time-indexed observations that capture both intra-journey dynamics and inter-station propagation effects.
+
+From a data systems perspective, the Indian Railways research ecosystem remains constrained by the absence of an openly accessible, continuously updated, and methodologically reproducible delay dataset. To address this gap, we design and deploy a cloud-native, serverless collection architecture that integrates scheduled workflow orchestration (GitHub Actions cron jobs), real-time REST API acquisition (RailRadar), and relational persistence (Supabase PostgreSQL) for lifecycle-aware train journey tracking. This design enables repeatable acquisition of structured operational telemetry suitable for statistical analysis and machine learning workflows.
 
 \subsection{Problem Statement}
 
-While developed railway systems in Europe, Japan, and North America maintain comprehensive public datasets documenting train performance \cite{uk_rail_data, german_rail_data}, Indian Railways lacks a publicly accessible, granular dataset capturing real-time delay information. Existing research on Indian railway delays relies on:
+Although railway operators in Europe, Japan, and North America publish structured operational datasets that support reproducible performance analytics \cite{uk_rail_data, german_rail_data}, Indian Railways does not yet offer a public, high-granularity dataset with station-level and time-resolved delay observations suitable for real-time modeling and longitudinal analysis. Consequently, existing studies on Indian railway delays are typically constrained to low-fidelity or non-reproducible data sources, including:
 
 \begin{itemize}
-    \item Aggregated annual reports with limited temporal resolution
-    \item Manually collected survey data with sampling bias
-    \item Proprietary datasets inaccessible to researchers
-    \item Anecdotal evidence from passenger complaints
+    \item Aggregated annual or periodic reports with coarse temporal granularity and limited station-level observability
+    \item Manually collected survey datasets prone to sampling bias, observer inconsistency, and sparse temporal coverage
+    \item Proprietary or institution-specific datasets that are inaccessible for independent validation and comparative benchmarking
+    \item Anecdotal complaint records that lack standardized operational metadata (e.g., scheduled vs.\ actual event timestamps)
 \end{itemize}
 
-This data scarcity hinders the development of data-driven solutions for delay prediction, schedule optimization, and passenger information systems. The absence of station-level, journey-specific delay data prevents rigorous analysis of delay propagation patterns, bottleneck identification, and service quality assessment.
+This data deficit materially limits the development and external validation of data-driven methods for delay prediction, timetable optimization, and passenger information systems. In particular, the absence of complete journey-lifecycle, station-wise delay traces impedes rigorous analysis of delay propagation dynamics, bottleneck localization, and route-level service reliability. Addressing this gap requires an open, continuously collected, and methodologically reproducible dataset generated through automated pipeline orchestration and state-aware journey tracking.
 
 \subsection{Motivation and Contributions}
 
