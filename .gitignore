@@ -24,3 +24,11 @@ Thumbs.db
 # Temporary check files
 check_fk.py
 check_existing_fk.py
+docs/minor_proj/minor_project_report.aux
+docs/minor_proj/minor_project_report.bbl
+docs/minor_proj/minor_project_report.blg
+docs/minor_proj/minor_project_report.lof
+docs/minor_proj/minor_project_report.log
+docs/minor_proj/minor_project_report.lot
+docs/minor_proj/minor_project_report.out
+docs/minor_proj/minor_project_report.toc
