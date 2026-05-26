@@ -1,0 +1,27 @@
+{
+  "features": [
+    "current_delay",
+    "previous_delay_1",
+    "previous_delay_2",
+    "rolling_avg_last_3_delays",
+    "rolling_std_last_3_delays",
+    "delay_trend_slope",
+    "journey_progress_pct",
+    "day_of_week",
+    "month",
+    "is_weekend",
+    "hour_of_day",
+    "overnight_segment_flag",
+    "station_index",
+    "distance_from_origin",
+    "distance_to_next_station",
+    "scheduled_travel_time_min",
+    "halt_duration_min",
+    "average_speed_expected_kmph",
+    "avg_delay_at_station",
+    "avg_delay_on_segment",
+    "avg_delay_for_train",
+    "station_congestion_score",
+    "delay_variance_at_station"
+  ]
+}
