@@ -36,22 +36,35 @@ function delayInfo(minutes) {
  * @param {object} stationData - { code, name, delayArrival, delayDeparture, scheduledArrival, actualArrival, scheduledDeparture, actualDeparture }
  */
 export function showTooltip(e, stationData) {
-  const { code, name, delayArrival, delayDeparture,
+  const { code, name, status, delayArrival, delayDeparture,
           scheduledArrival, actualArrival,
           scheduledDeparture, actualDeparture } = stationData;
 
   const depInfo = delayInfo(delayDeparture);
   const arrInfo = delayInfo(delayArrival);
 
+  let statusBadge = '';
+  if (status === 'Current') {
+    statusBadge = `<div class="tooltip-status-badge status-current">🔴 Train is Here</div>`;
+  } else if (status === 'Passed') {
+    statusBadge = `<div class="tooltip-status-badge status-passed">✓ Passed</div>`;
+  } else if (status === 'Upcoming') {
+    statusBadge = `<div class="tooltip-status-badge status-upcoming">⌛ Upcoming</div>`;
+  }
+
+  const arrLabel = status === 'Upcoming' ? 'Predicted Arr' : 'Actual Arr';
+  const depLabel = status === 'Upcoming' ? 'Predicted Dep' : 'Actual Dep';
+
   tooltip.innerHTML = `
     <div class="tooltip-station-code">${code}</div>
     <div class="tooltip-station-name">${name}</div>
+    ${statusBadge}
     <div class="tooltip-row">
       <span class="tooltip-row-label">Sched. Arr</span>
       <span class="tooltip-row-value">${formatTime(scheduledArrival)}</span>
     </div>
     <div class="tooltip-row">
-      <span class="tooltip-row-label">Actual Arr</span>
+      <span class="tooltip-row-label">${arrLabel}</span>
       <span class="tooltip-row-value">${formatTime(actualArrival)}</span>
     </div>
     <div class="tooltip-row">
@@ -59,7 +72,7 @@ export function showTooltip(e, stationData) {
       <span class="tooltip-row-value">${formatTime(scheduledDeparture)}</span>
     </div>
     <div class="tooltip-row">
-      <span class="tooltip-row-label">Actual Dep</span>
+      <span class="tooltip-row-label">${depLabel}</span>
       <span class="tooltip-row-value">${formatTime(actualDeparture)}</span>
     </div>
     <div class="tooltip-row" style="margin-top:4px">

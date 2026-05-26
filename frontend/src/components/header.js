@@ -23,11 +23,24 @@ export function initHeader() {
     select.appendChild(opt);
   });
 
+  // Add the dynamic option for 26th May 2026 (Live API Data)
+  const opt26 = document.createElement('option');
+  opt26.value = '2026-05-26';
+  const d26 = new Date('2026-05-26T00:00:00');
+  opt26.textContent = `🔴 Live: ${d26.toLocaleDateString('en-IN', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  })}`;
+  select.appendChild(opt26);
+
   // Default to the most recent date
   select.value = journeyDates[journeyDates.length - 1];
 
   select.addEventListener('change', () => {
-    EventBus.emit('journeyChange', select.value);
+    // Note: The main listener in app.js will handle fetching if necessary.
+    // We only emit here as a fallback/safety net for pre-loaded dates.
+    if (TRAIN_18238.journeys[select.value]) {
+      EventBus.emit('journeyChange', select.value);
+    }
   });
 
   // Initial stats
