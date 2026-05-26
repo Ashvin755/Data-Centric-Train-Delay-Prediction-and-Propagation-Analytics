@@ -30,7 +30,7 @@ Delays/timing data from previous stations in the current journey.
 
 ## Output
 
-Predicted delay at the next station.
+Predicted delay at the next station (use delay_departure_minutes).
 
 ---
 
@@ -98,12 +98,12 @@ Create stable station ordering for each train.
 
 For each train:
 
-* identify canonical route
+* use the static JSON route and keep halt-only stations as the canonical route
 * assign station_index:
 
-  * source = 0
-  * next station = 1
-  * etc.
+        * source = 0
+        * next station = 1
+        * etc.
 
 ## Example
 
@@ -129,7 +129,7 @@ Convert journeys into supervised ML rows.
 ## Transformation Logic
 
 For station i:
-predict station i+1 delay.
+predict station i+1 delay_departure_minutes.
 
 ## Example
 
@@ -192,13 +192,13 @@ Next station delay: 31
 
 ## Required
 
-* avg_delay_at_station
-* avg_delay_on_segment
-* avg_delay_for_train
-* station_congestion_score
-* delay_variance_at_station
+* avg_delay_at_station (expanding window, past-only)
+* avg_delay_on_segment (expanding window, past-only)
+* avg_delay_for_train (expanding window, past-only)
+* station_congestion_score (expanding window, past-only)
+* delay_variance_at_station (expanding window, past-only)
 
-These features are HIGH VALUE.
+These features are HIGH VALUE but must be computed without leakage.
 
 ---
 
@@ -375,7 +375,7 @@ For every model:
 ## Secondary
 
 * RMSE
-* R²
+* R² (optional)
 
 ---
 
@@ -567,10 +567,15 @@ POST /predict-delay
 
 ```json
 {
-  "train_no": 12627,
-  "current_station": "BPL",
-  "current_delay": 18,
-  "previous_delays": [12, 10]
+        "train_no": 12627,
+        "current_station": "BPL",
+        "current_delay": 18,
+        "previous_delays": [12, 10],
+        "station_index": 5,
+        "distance_from_origin": 530.0,
+        "hour_of_day": 14,
+        "day_of_week": 2,
+        "month": 5
 }
 ```
 
@@ -636,9 +641,7 @@ TCNs are:
 
 ## Input Format
 
-Instead of flat rows:
-
-Generate sliding windows.
+Split by time first, then generate sliding windows within each split.
 
 ---
 
@@ -846,6 +849,7 @@ Can initially be rule-based.
 * start with deep learning
 * skip baselines
 * use random train/test split
+* compute historical stats using future data
 
 ---
 
@@ -856,6 +860,7 @@ Can initially be rule-based.
 * log all experiments
 * track metrics consistently
 * build reusable pipelines
+* compute historical stats using expanding windows on past-only data
 
 ---
 
