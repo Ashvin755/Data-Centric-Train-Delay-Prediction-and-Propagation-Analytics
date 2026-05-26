@@ -1,0 +1,61 @@
+/* =====================================================
+   MAP CSS — Leaflet Overrides & Station Markers
+   ===================================================== */
+
+/* Remove default Leaflet attribution branding (keep required text) */
+.leaflet-control-attribution {
+  font-family: var(--font);
+  font-size: 10px;
+  background: rgba(255,255,255,0.85) !important;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  padding: 2px 6px;
+}
+
+/* Zoom controls */
+.leaflet-bar {
+  border: var(--border-w) solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+
+.leaflet-bar a {
+  font-family: var(--font) !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  color: var(--text-primary) !important;
+  background: var(--surface) !important;
+  border-bottom: var(--border-w) solid var(--border) !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 28px !important;
+  transition: background 0.1s;
+}
+
+.leaflet-bar a:hover {
+  background: var(--accent-yellow) !important;
+}
+
+.leaflet-bar a:last-child {
+  border-bottom: none !important;
+}
+
+/* Station hit-area markers (invisible, used only for tooltip hover) */
+.leaflet-marker-icon {
+  /* No visual styling needed — markers are transparent hit areas */
+}
+
+/* Route polyline - base dark line */
+.route-line {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Popup override (not used but just in case) */
+.leaflet-popup-content-wrapper {
+  font-family: var(--font);
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}

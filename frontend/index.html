@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rail Delay Dashboard — Chhattisgarh Express 18238</title>
+  <meta name="description" content="Interactive dashboard visualizing delays of Chhattisgarh Express (18238) across its 85-station route from Amritsar to Bilaspur." />
+
+  <!-- Google Fonts: Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Application Styles -->
+  <link rel="stylesheet" href="src/styles/main.css" />
+  <link rel="stylesheet" href="src/styles/map.css" />
+  <link rel="stylesheet" href="src/styles/charts.css" />
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <header id="app-header">
+    <div id="train-badge">
+      <span id="train-number-label">18238</span>
+      <span id="train-name-label">Chhattisgarh Express</span>
+      <span id="train-route-label">ASR → BSP</span>
+    </div>
+
+    <div id="journey-selector-block">
+      <label for="journey-date-select" id="journey-label">Journey Date</label>
+      <div id="select-wrapper">
+        <select id="journey-date-select" aria-label="Select journey date"></select>
+        <span id="select-arrow">▾</span>
+      </div>
+    </div>
+
+    <div id="stats-bar">
+      <div class="stat-chip" id="stat-max-delay">
+        <span class="stat-label">Max Delay</span>
+        <span class="stat-value" id="val-max-delay">—</span>
+      </div>
+      <div class="stat-chip" id="stat-avg-delay">
+        <span class="stat-label">Avg Delay</span>
+        <span class="stat-value" id="val-avg-delay">—</span>
+      </div>
+      <div class="stat-chip" id="stat-on-time">
+        <span class="stat-label">On Time</span>
+        <span class="stat-value" id="val-on-time">—</span>
+      </div>
+      <div class="stat-chip" id="stat-stations">
+        <span class="stat-label">Stations</span>
+        <span class="stat-value" id="val-stations">—</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main id="app-main">
+    <!-- Map Panel -->
+    <section id="map-panel" aria-label="Route map with delay visualization">
+      <div id="map-container">
+        <div id="leaflet-map"></div>
+        <!-- Map Legend -->
+        <div id="map-legend" aria-label="Delay color legend">
+          <div class="legend-title">Departure Delay</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span>Early / On Time</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#facc15"></span>1–10 min</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f97316"></span>11–30 min</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>&gt;30 min</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#94a3b8"></span>No Data</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Panel -->
+    <section id="charts-panel" aria-label="Delay analysis charts">
+      <!-- Chart A: Delay Profile -->
+      <div class="chart-card" id="chart-card-profile">
+        <div class="chart-card-header">
+          <h2 class="chart-title">Departure Delay Profile</h2>
+          <span class="chart-subtitle">per station along route</span>
+        </div>
+        <div class="chart-body">
+          <canvas id="chart-profile" aria-label="Delay profile line chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart B: Delay Distribution -->
+      <div class="chart-card" id="chart-card-dist">
+        <div class="chart-card-header">
+          <h2 class="chart-title">Delay Distribution</h2>
+          <span class="chart-subtitle">stations per bracket</span>
+        </div>
+        <div class="chart-body">
+          <canvas id="chart-distribution" aria-label="Delay distribution histogram"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart C: Segment Alpha -->
+      <div class="chart-card" id="chart-card-alpha">
+        <div class="chart-card-header">
+          <h2 class="chart-title">Segment Alpha</h2>
+          <span class="chart-subtitle">delay change between stations</span>
+        </div>
+        <div class="chart-body">
+          <canvas id="chart-alpha" aria-label="Segment alpha bar chart"></canvas>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Custom Tooltip (managed by JS) -->
+  <div id="station-tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <!-- Scripts -->
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- App Entry Point (ES Modules) -->
+  <script type="module" src="src/lib/app.js"></script>
+</body>
+</html>
