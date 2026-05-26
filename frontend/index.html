@@ -15,9 +15,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <!-- Application Styles -->
-  <link rel="stylesheet" href="src/styles/main.css" />
-  <link rel="stylesheet" href="src/styles/map.css" />
-  <link rel="stylesheet" href="src/styles/charts.css" />
+  <link rel="stylesheet" href="src/styles/main.css?v=4" />
+  <link rel="stylesheet" href="src/styles/map.css?v=3" />
+  <link rel="stylesheet" href="src/styles/charts.css?v=3" />
 </head>
 <body>
   <!-- ===== HEADER ===== -->
@@ -40,18 +40,42 @@
       <div class="stat-chip" id="stat-max-delay">
         <span class="stat-label">Max Delay</span>
         <span class="stat-value" id="val-max-delay">—</span>
+        <div class="chip-tooltip">
+          <div class="chip-tooltip-title">Max Delay</div>
+          <div class="chip-tooltip-desc">The highest departure delay recorded at any station along the route.</div>
+        </div>
       </div>
       <div class="stat-chip" id="stat-avg-delay">
         <span class="stat-label">Avg Delay</span>
         <span class="stat-value" id="val-avg-delay">—</span>
+        <div class="chip-tooltip">
+          <div class="chip-tooltip-title">Average Delay</div>
+          <div class="chip-tooltip-desc">The average departure delay calculated across all stations on the route.</div>
+        </div>
       </div>
       <div class="stat-chip" id="stat-on-time">
         <span class="stat-label">On Time</span>
         <span class="stat-value" id="val-on-time">—</span>
+        <div class="chip-tooltip">
+          <div class="chip-tooltip-title">On Time Rate</div>
+          <div class="chip-tooltip-desc">The percentage of stations where the train departed within 5 minutes of schedule.</div>
+        </div>
+      </div>
+      <div class="stat-chip" id="stat-recovery">
+        <span class="stat-label">Recovery</span>
+        <span class="stat-value" id="val-recovery">—</span>
+        <div class="chip-tooltip">
+          <div class="chip-tooltip-title">Delay Recovery</div>
+          <div class="chip-tooltip-desc">Peak delay minus final delay. Measures time recovered along the journey.</div>
+        </div>
       </div>
       <div class="stat-chip" id="stat-stations">
         <span class="stat-label">Stations</span>
         <span class="stat-value" id="val-stations">—</span>
+        <div class="chip-tooltip">
+          <div class="chip-tooltip-title">Tracked Stations</div>
+          <div class="chip-tooltip-desc">The number of stations with active tracking data out of 85 total.</div>
+        </div>
       </div>
     </div>
   </header>
@@ -71,6 +95,22 @@
           <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>&gt;30 min</div>
           <div class="legend-item"><span class="legend-dot" style="background:#94a3b8"></span>No Data</div>
         </div>
+
+        <!-- Top Delay Amplifiers Widget -->
+        <div id="delay-amplifiers-widget" class="draggable-widget">
+          <div class="widget-header">
+            <div class="widget-title-group">
+              <h3 class="widget-title">Top Delay Amplifiers</h3>
+              <p class="widget-subtitle">Stations causing highest delay increase</p>
+            </div>
+            <button id="widget-minimize-btn" aria-label="Minimize widget">−</button>
+          </div>
+          <div class="widget-content">
+            <ul id="amplifier-list">
+              <!-- populated by JS -->
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -81,6 +121,10 @@
         <div class="chart-card-header">
           <h2 class="chart-title">Departure Delay Profile</h2>
           <span class="chart-subtitle">per station along route</span>
+          <div class="chip-tooltip">
+            <div class="chip-tooltip-title">Departure Delay Profile</div>
+            <div class="chip-tooltip-desc">A continuous line profile showing departure delays at all 85 stations along the journey, color-coded by delay severity.</div>
+          </div>
         </div>
         <div class="chart-body">
           <canvas id="chart-profile" aria-label="Delay profile line chart"></canvas>
@@ -92,6 +136,10 @@
         <div class="chart-card-header">
           <h2 class="chart-title">Delay Distribution</h2>
           <span class="chart-subtitle">stations per bracket</span>
+          <div class="chip-tooltip">
+            <div class="chip-tooltip-title">Delay Distribution</div>
+            <div class="chip-tooltip-desc">A count of how many stations fall into each delay duration bracket (e.g. on-time, mild, moderate, or severe delays) on this run.</div>
+          </div>
         </div>
         <div class="chart-body">
           <canvas id="chart-distribution" aria-label="Delay distribution histogram"></canvas>
@@ -103,6 +151,10 @@
         <div class="chart-card-header">
           <h2 class="chart-title">Segment Alpha</h2>
           <span class="chart-subtitle">delay change between stations</span>
+          <div class="chip-tooltip">
+            <div class="chip-tooltip-title">Segment Alpha</div>
+            <div class="chip-tooltip-desc">Shows the change in delay between consecutive station pairs. Red bars represent delay increases (amplification), green bars represent delay reductions (recovery).</div>
+          </div>
         </div>
         <div class="chart-body">
           <canvas id="chart-alpha" aria-label="Segment alpha bar chart"></canvas>
@@ -121,6 +173,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
   <!-- App Entry Point (ES Modules) -->
-  <script type="module" src="src/lib/app.js"></script>
+  <script type="module" src="src/lib/app.js?v=2"></script>
 </body>
 </html>

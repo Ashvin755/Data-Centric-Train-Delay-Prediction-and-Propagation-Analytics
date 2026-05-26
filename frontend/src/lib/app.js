@@ -11,6 +11,7 @@ export { EventBus } from './eventbus.js';
 import { initHeader } from '../components/header.js';
 import { initMap } from '../components/map.js';
 import { initCharts } from '../components/charts.js';
+import { initAmplifiers } from '../components/amplifiers.js';
 
 function init() {
   // 1. Header (populates select + stats)
@@ -21,6 +22,9 @@ function init() {
 
   // 3. Charts (Chart.js)
   initCharts();
+
+  // 4. Delay Amplifiers Widget
+  initAmplifiers();
 
   // 4. Wire up select → event bus (header.js also does this, safety net)
   const select = document.getElementById('journey-date-select');

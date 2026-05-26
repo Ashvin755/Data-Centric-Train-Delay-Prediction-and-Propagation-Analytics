@@ -55,6 +55,15 @@ function updateStats(date) {
     ? Math.round((delays.filter(d => d <= 5).length / delays.length) * 100)
     : null;
 
+  // Delay Recovery = Max Delay - Delay of the last station (BSP)
+  const lastStation = journey[journey.length - 1];
+  const lastStationDelay = lastStation
+    ? (lastStation.delayArrival !== null ? lastStation.delayArrival : lastStation.delayDeparture)
+    : null;
+  const delayRecovery = (maxDelay !== null && lastStationDelay !== null)
+    ? Math.max(0, maxDelay - lastStationDelay)
+    : null;
+
   document.getElementById('val-max-delay').textContent =
     maxDelay !== null ? `${maxDelay > 0 ? '+' : ''}${Math.round(maxDelay)}m` : '—';
 
@@ -63,6 +72,9 @@ function updateStats(date) {
 
   document.getElementById('val-on-time').textContent =
     onTimePct !== null ? `${onTimePct}%` : '—';
+
+  document.getElementById('val-recovery').textContent =
+    delayRecovery !== null ? `${delayRecovery > 0 ? '+' : ''}${Math.round(delayRecovery)}m` : '—';
 
   document.getElementById('val-stations').textContent =
     `${journey.length}/85`;

@@ -34,6 +34,34 @@ function delayColorArr(arr) {
   return arr.map(delayColor);
 }
 
+function interpolateColor(c1, c2, t) {
+  const hex2rgb = hex => {
+    let h = hex.slice(1);
+    if (h.length === 3) h = [...h].map(x => x + x).join('');
+    const v = parseInt(h, 16);
+    return [v >> 16, (v >> 8) & 255, v & 255];
+  };
+  const [r1, g1, b1] = hex2rgb(c1);
+  const [r2, g2, b2] = hex2rgb(c2);
+  const r = Math.round(r1 + (r2 - r1) * t);
+  const g = Math.round(g1 + (g2 - g1) * t);
+  const b = Math.round(b1 + (b2 - b1) * t);
+  return `rgb(${r},${g},${b})`;
+}
+
+function getAlphaColor(alpha) {
+  if (alpha === null || alpha === undefined || isNaN(alpha)) return '#cbd5e1';
+  if (alpha <= 0) {
+    // Map -15 to 0 -> yellow to light gray
+    const t = Math.min(1, Math.max(0, (alpha + 15) / 15));
+    return interpolateColor('#facc15', '#f8fafc', t);
+  } else {
+    // Map 0 to 30 -> light gray to purple
+    const t = Math.min(1, Math.max(0, alpha / 30));
+    return interpolateColor('#f8fafc', '#a855f7', t);
+  }
+}
+
 // ─── Chart A: Departure Delay Profile ─────────────────────────────────────────
 function buildProfileData(date) {
   const journey = TRAIN_18238.journeys[date] || [];
@@ -60,21 +88,33 @@ function initProfileChart(date) {
   const { labels, delays, colors } = buildProfileData(date);
 
   chartProfile = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
       labels,
       datasets: [{
         label: 'Dep Delay (min)',
         data: delays,
-        backgroundColor: colors,
-        borderColor: colors.map(c => c === MUTED ? '#cbd5e1' : '#1a1a1a'),
-        borderWidth: 1,
-        borderRadius: 2,
-        barThickness: 'flex',
-        minBarLength: 2,
+        borderColor: '#1a1a1a',
+        borderWidth: 4,
+        segment: {
+          borderColor: ctx => {
+            if (!ctx.p0 || !ctx.p1 || ctx.p0.parsed.y === undefined || ctx.p0.parsed.y === null) return MUTED;
+            const val = ctx.p0.parsed.y;
+            return delayColor(val);
+          }
+        },
+        pointBackgroundColor: colors,
+        pointBorderColor: colors.map(c => c === MUTED ? '#cbd5e1' : '#1a1a1a'),
+        pointBorderWidth: 1.5,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        spanGaps: true,
       }],
     },
     options: {
+      layout: {
+        padding: { bottom: 20 }
+      },
       responsive: true,
       maintainAspectRatio: false,
       animation: { duration: 300 },
@@ -126,6 +166,57 @@ function initProfileChart(date) {
         },
       },
     },
+    plugins: [
+      {
+        id: 'alphaBarPlugin',
+        afterDraw(chart) {
+          const { ctx, scales: { x }, chartArea: { left, right } } = chart;
+          if (!x) return;
+          const delays = chart.data.datasets[0].data;
+          const barY = x.bottom + 6;
+          const barHeight = 6;
+          const barRadius = 3;
+          const width = right - left;
+          if (width <= 0) return;
+
+          const grad = ctx.createLinearGradient(left, 0, right, 0);
+          let addedStops = false;
+
+          for (let i = 0; i < delays.length - 1; i++) {
+             const d1 = delays[i];
+             const d2 = delays[i+1];
+             let alpha = null;
+             if (d1 !== null && d2 !== null && d1 !== undefined && d2 !== undefined) {
+               alpha = d2 - d1;
+             }
+
+             const color = getAlphaColor(alpha);
+             const x0 = x.getPixelForValue(i);
+             const x1 = x.getPixelForValue(i + 1);
+             const tc = ((x0 + x1) / 2 - left) / width;
+             const tClamp = Math.max(0, Math.min(1, tc));
+
+             grad.addColorStop(tClamp, color);
+             if (i === 0) grad.addColorStop(0, color);
+             if (i === delays.length - 2) grad.addColorStop(1, color);
+             addedStops = true;
+          }
+
+          if (!addedStops) return;
+
+          ctx.save();
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(left, barY, width, barHeight, barRadius);
+          } else {
+            ctx.rect(left, barY, width, barHeight);
+          }
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    ]
   });
 
   // Reference lines as plugin
@@ -137,8 +228,8 @@ function updateProfileChart(date) {
   const { labels, delays, colors } = buildProfileData(date);
   chartProfile.data.labels = labels;
   chartProfile.data.datasets[0].data = delays;
-  chartProfile.data.datasets[0].backgroundColor = colors;
-  chartProfile.data.datasets[0].borderColor = colors.map(c => c === MUTED ? '#cbd5e1' : '#1a1a1a');
+  chartProfile.data.datasets[0].pointBackgroundColor = colors;
+  chartProfile.data.datasets[0].pointBorderColor = colors.map(c => c === MUTED ? '#cbd5e1' : '#1a1a1a');
   chartProfile.update('active');
 }
 
