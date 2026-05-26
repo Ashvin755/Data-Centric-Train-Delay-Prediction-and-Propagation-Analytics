@@ -7,7 +7,6 @@
  * Invisible hit-area markers on each station still fire tooltip events.
  */
 import { STATIONS } from '../data/stations.js';
-import { TRAIN_18238 } from '../data/train_18238.js';
 import { EventBus } from '../lib/eventbus.js';
 import { showTooltip, moveTooltip, hideTooltip } from './tooltip.js';
 
@@ -16,6 +15,9 @@ let map = null;
 let layers = [];
 /** Static base route polyline (very thin, dark background track) */
 let basePolyline = null;
+
+let currentTrainData = null;
+let isEventBusAttached = false;
 
 // ─── Color helpers ─────────────────────────────────────────────────────────────
 
@@ -45,25 +47,33 @@ function lerpColor(hex1, hex2, t) {
 // ─── Build route coords ────────────────────────────────────────────────────────
 
 function buildRouteLatLngs() {
-  return TRAIN_18238.route
+  return currentTrainData.route
     .filter(code => STATIONS[code])
     .map(code => [STATIONS[code].lat, STATIONS[code].lon]);
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
-export function initMap() {
-  map = L.map('leaflet-map', {
-    zoomControl: true,
-    attributionControl: true,
-  });
+export function initMap(trainData) {
+  currentTrainData = trainData;
 
-  // CartoDB Positron — muted tiles so data colors pop
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a> | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    subdomains: 'abcd',
-    maxZoom: 18,
-  }).addTo(map);
+  if (!map) {
+    map = L.map('leaflet-map', {
+      zoomControl: true,
+      attributionControl: true,
+    });
+
+    // CartoDB Positron — muted tiles so data colors pop
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a> | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      subdomains: 'abcd',
+      maxZoom: 18,
+    }).addTo(map);
+  }
+
+  if (basePolyline) {
+    map.removeLayer(basePolyline);
+  }
 
   // Thin dark background track (always visible, shows the full route)
   const routeLatLngs = buildRouteLatLngs();
@@ -77,10 +87,17 @@ export function initMap() {
 
   map.fitBounds(basePolyline.getBounds(), { padding: [30, 30] });
 
-  EventBus.on('journeyChange', renderGradientLine);
+  if (!isEventBusAttached) {
+    EventBus.on('journeyChange', renderGradientLine);
+    isEventBusAttached = true;
+  }
 
-  const dates = Object.keys(TRAIN_18238.journeys).sort();
-  renderGradientLine(dates[dates.length - 1]);
+  const dates = Object.keys(currentTrainData.journeys).sort();
+  if (dates.length > 0) {
+    renderGradientLine(dates[dates.length - 1]);
+  } else {
+    clearLayers();
+  }
 }
 
 // ─── Clear ────────────────────────────────────────────────────────────────────
@@ -93,16 +110,17 @@ function clearLayers() {
 // ─── Gradient line renderer ───────────────────────────────────────────────────
 
 function renderGradientLine(date) {
+  if (!currentTrainData) return;
   clearLayers();
 
-  const journey = TRAIN_18238.journeys[date];
+  const journey = currentTrainData.journeys[date];
   if (!journey) return;
 
   // Build lookup: stationCode → row data
   const dataMap = {};
   journey.forEach(row => { dataMap[row.stationCode] = row; });
 
-  const route = TRAIN_18238.route;
+  const route = currentTrainData.route;
 
   // 1. Find the index of the train's current station.
   // It is the last station in route order that has actualArrival or actualDeparture !== null AND <= current time
@@ -122,17 +140,13 @@ function renderGradientLine(date) {
   }
 
   // Fallbacks:
-  // If the journey has no tracking details yet, default to the start (ASR)
+  // If the journey has no tracking details yet, default to the start
   // If it's a dynamic live journey, we display the last reached station.
   if (currentStationIndex === -1 && route.length > 0) {
     currentStationIndex = 0;
   }
 
   // ── 2. Draw segments between consecutive stations ──────────────────────────
-  //
-  // Completed segments are drawn as thick colored polylines (with gradients).
-  // Upcoming segments (yet to come) are drawn as faded dashed grey lines.
-  //
   const SUB_STEPS = 6; // number of sub-segments per station pair
   const LINE_WEIGHT = 6;
 
@@ -192,9 +206,31 @@ function renderGradientLine(date) {
 
   // ── 3. Draw a custom pulsing train icon at the current station ────────────
   if (currentStationIndex !== -1 && currentStationIndex < route.length) {
-    const currentCode = route[currentStationIndex];
-    const currentMeta = STATIONS[currentCode];
-    
+    // Find the closest station (backwards) that has coordinates
+    let bestIndex = currentStationIndex;
+    let currentMeta = null;
+    let actualCode = route[currentStationIndex];
+
+    while (bestIndex >= 0) {
+      if (STATIONS[route[bestIndex]]) {
+        currentMeta = STATIONS[route[bestIndex]];
+        break;
+      }
+      bestIndex--;
+    }
+
+    // If still not found, try searching forwards
+    if (!currentMeta) {
+      bestIndex = currentStationIndex;
+      while (bestIndex < route.length) {
+        if (STATIONS[route[bestIndex]]) {
+          currentMeta = STATIONS[route[bestIndex]];
+          break;
+        }
+        bestIndex++;
+      }
+    }
+
     if (currentMeta) {
       const trainIcon = L.divIcon({
         className: 'custom-train-icon',
@@ -213,10 +249,11 @@ function renderGradientLine(date) {
       }).addTo(map);
 
       // Neo-brutalist custom styled popup on click
+      const actualName = (STATIONS[actualCode] && STATIONS[actualCode].name) || actualCode;
       trainMarker.bindPopup(`
         <div style="font-family:'Space Grotesk', sans-serif; padding:2px">
-          <strong style="font-size:13px; text-transform:uppercase; display:block; margin-bottom:4px">🚂 Chhattisgarh Express</strong>
-          <span style="font-size:11px; color:#555">Current Location: <strong>${currentMeta.name} (${currentCode})</strong></span>
+          <strong style="font-size:13px; text-transform:uppercase; display:block; margin-bottom:4px">🚂 ${currentTrainData.trainName}</strong>
+          <span style="font-size:11px; color:#555">Current Location: <strong>${actualName} (${actualCode})</strong></span>
         </div>
       `, {
         closeButton: false,
@@ -228,10 +265,6 @@ function renderGradientLine(date) {
   }
 
   // ── 4. Invisible hit-area markers on each station ─────────────────────────
-  //
-  // These are transparent large circles that capture hover events for
-  // the tooltip. No visual presence — the gradient line is the visual.
-  //
   const HIT_RADIUS = 8; // pixels
 
   route.forEach((code, index) => {

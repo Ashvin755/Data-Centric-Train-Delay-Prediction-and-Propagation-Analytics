@@ -1,0 +1,501 @@
+{
+  "status": "success",
+  "date": "2026-05-26",
+  "journey": [
+    {
+      "stationCode": "CSMT",
+      "scheduledArrival": 1779804300,
+      "scheduledDeparture": 1779804300,
+      "actualArrival": null,
+      "actualDeparture": null,
+      "delayArrival": null,
+      "delayDeparture": null
+    },
+    {
+      "stationCode": "DR",
+      "scheduledArrival": 1779805020,
+      "scheduledDeparture": 1779805200,
+      "actualArrival": 1779805280,
+      "actualDeparture": null,
+      "delayArrival": 4,
+      "delayDeparture": null
+    },
+    {
+      "stationCode": "KYN",
+      "scheduledArrival": 1779807720,
+      "scheduledDeparture": 1779807900,
+      "actualArrival": 1779808928,
+      "actualDeparture": 1779809469,
+      "delayArrival": 20,
+      "delayDeparture": 26
+    },
+    {
+      "stationCode": "KSRA",
+      "scheduledArrival": 1779811920,
+      "scheduledDeparture": 1779812100,
+      "actualArrival": 1779813843,
+      "actualDeparture": 1779814494,
+      "delayArrival": 32,
+      "delayDeparture": 40
+    },
+    {
+      "stationCode": "NK",
+      "scheduledArrival": 1779816300,
+      "scheduledDeparture": 1779816600,
+      "actualArrival": 1779819675,
+      "actualDeparture": 1779820242,
+      "delayArrival": 56,
+      "delayDeparture": 61
+    },
+    {
+      "stationCode": "MMR",
+      "scheduledArrival": 1779820620,
+      "scheduledDeparture": 1779820800,
+      "actualArrival": 1779823911,
+      "actualDeparture": 1779824454,
+      "delayArrival": 55,
+      "delayDeparture": 61
+    },
+    {
+      "stationCode": "HPR",
+      "scheduledArrival": 1779823020,
+      "scheduledDeparture": 1779823020,
+      "actualArrival": 1779826828,
+      "actualDeparture": 1779826923,
+      "delayArrival": 63,
+      "delayDeparture": 65
+    },
+    {
+      "stationCode": "CSN",
+      "scheduledArrival": 1779823380,
+      "scheduledDeparture": 1779823500,
+      "actualArrival": 1779827317,
+      "actualDeparture": 1779827437,
+      "delayArrival": 66,
+      "delayDeparture": 66
+    },
+    {
+      "stationCode": "JL",
+      "scheduledArrival": 1779827580,
+      "scheduledDeparture": 1779827700,
+      "actualArrival": 1779830798,
+      "actualDeparture": 1779831007,
+      "delayArrival": 54,
+      "delayDeparture": 55
+    },
+    {
+      "stationCode": "BSL",
+      "scheduledArrival": 1779829800,
+      "scheduledDeparture": 1779830100,
+      "actualArrival": 1779832631,
+      "actualDeparture": 1779832931,
+      "delayArrival": 47,
+      "delayDeparture": 47
+    },
+    {
+      "stationCode": "BAU",
+      "scheduledArrival": 1779832680,
+      "scheduledDeparture": 1779832800,
+      "actualArrival": 1779835511,
+      "actualDeparture": 1779835871,
+      "delayArrival": 47,
+      "delayDeparture": 51
+    },
+    {
+      "stationCode": "KNW",
+      "scheduledArrival": 1779837720,
+      "scheduledDeparture": 1779837900,
+      "actualArrival": 1779838628,
+      "actualDeparture": 1779839116,
+      "delayArrival": 15,
+      "delayDeparture": 20
+    },
+    {
+      "stationCode": "KKN",
+      "scheduledArrival": 1779840600,
+      "scheduledDeparture": 1779840720,
+      "actualArrival": 1779841972,
+      "actualDeparture": 1779842226,
+      "delayArrival": 23,
+      "delayDeparture": 25
+    },
+    {
+      "stationCode": "HD",
+      "scheduledArrival": 1779841860,
+      "scheduledDeparture": 1779841980,
+      "actualArrival": 1779843612,
+      "actualDeparture": 1779843938,
+      "delayArrival": 29,
+      "delayDeparture": 33
+    },
+    {
+      "stationCode": "BPF",
+      "scheduledArrival": 1779843660,
+      "scheduledDeparture": 1779843780,
+      "actualArrival": 1779846165,
+      "actualDeparture": 1779846535,
+      "delayArrival": 42,
+      "delayDeparture": 46
+    },
+    {
+      "stationCode": "ET",
+      "scheduledArrival": 1779847200,
+      "scheduledDeparture": 1779847800,
+      "actualArrival": 1779848569,
+      "actualDeparture": 1779849169,
+      "delayArrival": 23,
+      "delayDeparture": 23
+    },
+    {
+      "stationCode": "NDPM",
+      "scheduledArrival": 1779848880,
+      "scheduledDeparture": 1779849000,
+      "actualArrival": 1779850249,
+      "actualDeparture": 1779850547,
+      "delayArrival": 23,
+      "delayDeparture": 26
+    },
+    {
+      "stationCode": "RKMP",
+      "scheduledArrival": 1779854280,
+      "scheduledDeparture": 1779854400,
+      "actualArrival": 1779854548,
+      "actualDeparture": 1779855097,
+      "delayArrival": 4,
+      "delayDeparture": 12
+    },
+    {
+      "stationCode": "BPL",
+      "scheduledArrival": 1779855300,
+      "scheduledDeparture": 1779855600,
+      "actualArrival": 1779856044,
+      "actualDeparture": 1779856650,
+      "delayArrival": 12,
+      "delayDeparture": 18
+    },
+    {
+      "stationCode": "BHS",
+      "scheduledArrival": 1779857700,
+      "scheduledDeparture": 1779857820,
+      "actualArrival": 1779858844,
+      "actualDeparture": 1779859251,
+      "delayArrival": 19,
+      "delayDeparture": 24
+    },
+    {
+      "stationCode": "BAQ",
+      "scheduledArrival": 1779859260,
+      "scheduledDeparture": 1779859380,
+      "actualArrival": 1779860833,
+      "actualDeparture": 1779861246,
+      "delayArrival": 26,
+      "delayDeparture": 31
+    },
+    {
+      "stationCode": "BINA",
+      "scheduledArrival": 1779863400,
+      "scheduledDeparture": 1779863700,
+      "actualArrival": 1779863375,
+      "actualDeparture": 1779864066,
+      "delayArrival": 0,
+      "delayDeparture": 6
+    },
+    {
+      "stationCode": "LAR",
+      "scheduledArrival": 1779866400,
+      "scheduledDeparture": 1779866520,
+      "actualArrival": 1779866544,
+      "actualDeparture": 1779866932,
+      "delayArrival": 2,
+      "delayDeparture": 7
+    },
+    {
+      "stationCode": "BAB",
+      "scheduledArrival": 1779869100,
+      "scheduledDeparture": 1779869220,
+      "actualArrival": 1779869650,
+      "actualDeparture": 1779870025,
+      "delayArrival": 9,
+      "delayDeparture": 13
+    },
+    {
+      "stationCode": "VGLJ",
+      "scheduledArrival": 1779871500,
+      "scheduledDeparture": 1779871980,
+      "actualArrival": 1779871289,
+      "actualDeparture": 1779872275,
+      "delayArrival": -4,
+      "delayDeparture": 5
+    },
+    {
+      "stationCode": "DAA",
+      "scheduledArrival": 1779873240,
+      "scheduledDeparture": 1779873360,
+      "actualArrival": 1779873379,
+      "actualDeparture": 1779873819,
+      "delayArrival": 2,
+      "delayDeparture": 8
+    },
+    {
+      "stationCode": "DBA",
+      "scheduledArrival": 1779874620,
+      "scheduledDeparture": 1779874740,
+      "actualArrival": 1779874867,
+      "actualDeparture": 1779875273,
+      "delayArrival": 4,
+      "delayDeparture": 9
+    },
+    {
+      "stationCode": "GWL",
+      "scheduledArrival": 1779876600,
+      "scheduledDeparture": 1779876720,
+      "actualArrival": 1779877332,
+      "actualDeparture": 1779877794,
+      "delayArrival": 12,
+      "delayDeparture": 18
+    },
+    {
+      "stationCode": "MRA",
+      "scheduledArrival": 1779878700,
+      "scheduledDeparture": 1779878820,
+      "actualArrival": 1779879149,
+      "actualDeparture": 1779879535,
+      "delayArrival": 7,
+      "delayDeparture": 12
+    },
+    {
+      "stationCode": "DHO",
+      "scheduledArrival": 1779882600,
+      "scheduledDeparture": 1779882720,
+      "actualArrival": 1779881161,
+      "actualDeparture": 1779882720,
+      "delayArrival": -24,
+      "delayDeparture": 0
+    },
+    {
+      "stationCode": "AGC",
+      "scheduledArrival": 1779885000,
+      "scheduledDeparture": 1779885300,
+      "actualArrival": 1779884964,
+      "actualDeparture": 1779885660,
+      "delayArrival": -1,
+      "delayDeparture": 6
+    },
+    {
+      "stationCode": "RKM",
+      "scheduledArrival": 1779885780,
+      "scheduledDeparture": 1779885900,
+      "actualArrival": 1779885961,
+      "actualDeparture": 1779886407,
+      "delayArrival": 3,
+      "delayDeparture": 8
+    },
+    {
+      "stationCode": "MTJ",
+      "scheduledArrival": 1779887700,
+      "scheduledDeparture": 1779888000,
+      "actualArrival": 1779888521,
+      "actualDeparture": 1779889085,
+      "delayArrival": 14,
+      "delayDeparture": 18
+    },
+    {
+      "stationCode": "KSV",
+      "scheduledArrival": 1779889560,
+      "scheduledDeparture": 1779889680,
+      "actualArrival": 1779890570,
+      "actualDeparture": 1779891024,
+      "delayArrival": 17,
+      "delayDeparture": 22
+    },
+    {
+      "stationCode": "FDB",
+      "scheduledArrival": 1779894300,
+      "scheduledDeparture": 1779894420,
+      "actualArrival": 1779893684,
+      "actualDeparture": 1779894420,
+      "delayArrival": -10,
+      "delayDeparture": 0
+    },
+    {
+      "stationCode": "NZM",
+      "scheduledArrival": 1779895500,
+      "scheduledDeparture": 1779895620,
+      "actualArrival": 1779895548,
+      "actualDeparture": 1779896072,
+      "delayArrival": 1,
+      "delayDeparture": 8
+    },
+    {
+      "stationCode": "NDLS",
+      "scheduledArrival": 1779897300,
+      "scheduledDeparture": 1779898200,
+      "actualArrival": 1779897083,
+      "actualDeparture": 1779898526,
+      "delayArrival": -4,
+      "delayDeparture": 5
+    },
+    {
+      "stationCode": "DKZ",
+      "scheduledArrival": 1779899040,
+      "scheduledDeparture": 1779899160,
+      "actualArrival": 1779899549,
+      "actualDeparture": 1779900136,
+      "delayArrival": 8,
+      "delayDeparture": 16
+    },
+    {
+      "stationCode": "SSB",
+      "scheduledArrival": 1779899880,
+      "scheduledDeparture": 1779900000,
+      "actualArrival": 1779900769,
+      "actualDeparture": 1779901060,
+      "delayArrival": 15,
+      "delayDeparture": 18
+    },
+    {
+      "stationCode": "BGZ",
+      "scheduledArrival": 1779900960,
+      "scheduledDeparture": 1779901080,
+      "actualArrival": 1779901915,
+      "actualDeparture": 1779902275,
+      "delayArrival": 16,
+      "delayDeparture": 20
+    },
+    {
+      "stationCode": "ROK",
+      "scheduledArrival": 1779902760,
+      "scheduledDeparture": 1779902880,
+      "actualArrival": 1779903938,
+      "actualDeparture": 1779904269,
+      "delayArrival": 20,
+      "delayDeparture": 23
+    },
+    {
+      "stationCode": "JIND",
+      "scheduledArrival": 1779905640,
+      "scheduledDeparture": 1779905760,
+      "actualArrival": 1779906987,
+      "actualDeparture": 1779907311,
+      "delayArrival": 22,
+      "delayDeparture": 26
+    },
+    {
+      "stationCode": "NRW",
+      "scheduledArrival": 1779907260,
+      "scheduledDeparture": 1779907380,
+      "actualArrival": 1779909092,
+      "actualDeparture": 1779909365,
+      "delayArrival": 31,
+      "delayDeparture": 33
+    },
+    {
+      "stationCode": "TUN",
+      "scheduledArrival": 1779908520,
+      "scheduledDeparture": 1779908640,
+      "actualArrival": 1779910426,
+      "actualDeparture": 1779910704,
+      "delayArrival": 32,
+      "delayDeparture": 34
+    },
+    {
+      "stationCode": "JHL",
+      "scheduledArrival": 1779909780,
+      "scheduledDeparture": 1779909900,
+      "actualArrival": 1779911457,
+      "actualDeparture": 1779911733,
+      "delayArrival": 28,
+      "delayDeparture": 31
+    },
+    {
+      "stationCode": "BRZ",
+      "scheduledArrival": 1779910560,
+      "scheduledDeparture": 1779910680,
+      "actualArrival": 1779912283,
+      "actualDeparture": 1779912605,
+      "delayArrival": 29,
+      "delayDeparture": 32
+    },
+    {
+      "stationCode": "BLZ",
+      "scheduledArrival": 1779911400,
+      "scheduledDeparture": 1779911520,
+      "actualArrival": 1779913235,
+      "actualDeparture": 1779913524,
+      "delayArrival": 31,
+      "delayDeparture": 33
+    },
+    {
+      "stationCode": "MSZ",
+      "scheduledArrival": 1779912300,
+      "scheduledDeparture": 1779912420,
+      "actualArrival": 1779914265,
+      "actualDeparture": 1779914551,
+      "delayArrival": 33,
+      "delayDeparture": 36
+    },
+    {
+      "stationCode": "MAUR",
+      "scheduledArrival": 1779913260,
+      "scheduledDeparture": 1779913380,
+      "actualArrival": 1779915268,
+      "actualDeparture": 1779915501,
+      "delayArrival": 33,
+      "delayDeparture": 35
+    },
+    {
+      "stationCode": "BTI",
+      "scheduledArrival": 1779917100,
+      "scheduledDeparture": 1779917700,
+      "actualArrival": 1779917659,
+      "actualDeparture": 1779918215,
+      "delayArrival": 9,
+      "delayDeparture": 9
+    },
+    {
+      "stationCode": "GNA",
+      "scheduledArrival": 1779918420,
+      "scheduledDeparture": 1779918540,
+      "actualArrival": 1779918907,
+      "actualDeparture": 1779919258,
+      "delayArrival": 8,
+      "delayDeparture": 12
+    },
+    {
+      "stationCode": "GJUT",
+      "scheduledArrival": 1779919320,
+      "scheduledDeparture": 1779919440,
+      "actualArrival": 1779919886,
+      "actualDeparture": 1779920260,
+      "delayArrival": 9,
+      "delayDeparture": 14
+    },
+    {
+      "stationCode": "KKP",
+      "scheduledArrival": 1779920280,
+      "scheduledDeparture": 1779920400,
+      "actualArrival": 1779921066,
+      "actualDeparture": 1779921445,
+      "delayArrival": 13,
+      "delayDeparture": 17
+    },
+    {
+      "stationCode": "FDK",
+      "scheduledArrival": 1779921300,
+      "scheduledDeparture": 1779921420,
+      "actualArrival": 1779922030,
+      "actualDeparture": 1779922538,
+      "delayArrival": 12,
+      "delayDeparture": 19
+    },
+    {
+      "stationCode": "FZR",
+      "scheduledArrival": 1779925500,
+      "scheduledDeparture": null,
+      "actualArrival": 1779924276,
+      "actualDeparture": null,
+      "delayArrival": -20,
+      "delayDeparture": null
+    }
+  ]
+}

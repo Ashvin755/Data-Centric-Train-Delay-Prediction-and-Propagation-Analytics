@@ -1,8 +1,11 @@
 import { STATIONS } from '../data/stations.js';
-import { TRAIN_18238 } from '../data/train_18238.js';
 import { EventBus } from '../lib/eventbus.js';
 
-export function initAmplifiers() {
+let currentTrainData = null;
+let isEventBusAttached = false;
+
+export function initAmplifiers(trainData) {
+  currentTrainData = trainData;
   const widget = document.getElementById('delay-amplifiers-widget');
   const minimizeBtn = document.getElementById('widget-minimize-btn');
   const header = document.querySelector('.widget-header');
@@ -21,70 +24,79 @@ export function initAmplifiers() {
   }
 
   // Minimize toggle
-  minimizeBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    widget.classList.toggle('minimized');
-    minimizeBtn.textContent = widget.classList.contains('minimized') ? '+' : '−';
-  });
+  // Avoid attaching multiple times
+  if (!widget.dataset.initialized) {
+    minimizeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      widget.classList.toggle('minimized');
+      minimizeBtn.textContent = widget.classList.contains('minimized') ? '+' : '−';
+    });
 
-  // Drag logic
-  let isDragging = false;
-  let startX, startY, initialLeft, initialTop;
+    // Drag logic
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
 
-  header.addEventListener('mousedown', (e) => {
-    if (e.target.id === 'widget-minimize-btn') return;
-    
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    
-    const rect = widget.getBoundingClientRect();
-    const parentRect = widget.parentElement.getBoundingClientRect();
-    
-    initialLeft = rect.left - parentRect.left;
-    initialTop = rect.top - parentRect.top;
-    
-    // Switch to explicit left/top positioning for dragging
-    widget.style.right = 'auto';
-    widget.style.left = initialLeft + 'px';
-    widget.style.top = initialTop + 'px';
-    
-    header.style.cursor = 'grabbing';
-    e.preventDefault(); // prevent text selection
-  });
+    header.addEventListener('mousedown', (e) => {
+      if (e.target.id === 'widget-minimize-btn') return;
+      
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      
+      const rect = widget.getBoundingClientRect();
+      const parentRect = widget.parentElement.getBoundingClientRect();
+      
+      initialLeft = rect.left - parentRect.left;
+      initialTop = rect.top - parentRect.top;
+      
+      // Switch to explicit left/top positioning for dragging
+      widget.style.right = 'auto';
+      widget.style.left = initialLeft + 'px';
+      widget.style.top = initialTop + 'px';
+      
+      header.style.cursor = 'grabbing';
+      e.preventDefault(); // prevent text selection
+    });
 
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    widget.style.left = (initialLeft + dx) + 'px';
-    widget.style.top = (initialTop + dy) + 'px';
-  });
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      widget.style.left = (initialLeft + dx) + 'px';
+      widget.style.top = (initialTop + dy) + 'px';
+    });
 
-  document.addEventListener('mouseup', () => {
-    if (isDragging) {
-      isDragging = false;
-      header.style.cursor = 'grab';
-    }
-  });
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        header.style.cursor = 'grab';
+      }
+    });
 
-  EventBus.on('journeyChange', updateAmplifiers);
+    widget.dataset.initialized = "true";
+  }
+
+  if (!isEventBusAttached) {
+    EventBus.on('journeyChange', updateAmplifiers);
+    isEventBusAttached = true;
+  }
 
   // Initialize with the latest journey date
-  const dates = Object.keys(TRAIN_18238.journeys).sort();
+  const dates = Object.keys(currentTrainData.journeys).sort();
   if (dates.length > 0) {
     updateAmplifiers(dates[dates.length - 1]);
   }
 }
 
 function updateAmplifiers(date) {
-  const journey = TRAIN_18238.journeys[date];
+  if (!currentTrainData) return;
+  const journey = currentTrainData.journeys[date];
   if (!journey) return;
   
   const dataMap = {};
   journey.forEach(r => { dataMap[r.stationCode] = r; });
   
-  const route = TRAIN_18238.route;
+  const route = currentTrainData.route;
   const alphas = [];
   
   for (let i = 0; i < route.length - 1; i++) {

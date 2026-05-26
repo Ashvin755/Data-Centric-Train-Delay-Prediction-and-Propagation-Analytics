@@ -29,6 +29,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
             
             # 1. Retrieve journey date from query param, or fall back to today in IST (GMT+5:30)
             journey_date = query_params.get("journeyDate", [None])[0]
+            train_no = query_params.get("trainNo", ["18238"])[0]
             
             if not journey_date:
                 ist_tz = timezone(timedelta(hours=5, minutes=30))
@@ -55,7 +56,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
             
-            url = "https://api.railradar.in/api/v1/trains/18238"
+            url = f"https://api.railradar.in/api/v1/trains/{train_no}"
             params = {
                 "journeyDate": journey_date,
                 "dataType": "live",
@@ -63,7 +64,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 "userId": ""
             }
             
-            print(f"[Server Proxy] Fetching live data for train 18238 on date: {journey_date}")
+            print(f"[Server Proxy] Fetching live data for train {train_no} on date: {journey_date}")
             response = scraper.get(url, headers=headers, params=params, timeout=20)
             
             if response.status_code != 200:

@@ -4,8 +4,10 @@
  *   B) Delay Distribution (bar/histogram)
  *   C) Segment Alpha (bar chart)
  */
-import { TRAIN_18238 } from '../data/train_18238.js';
 import { EventBus } from '../lib/eventbus.js';
+
+let currentTrainData = null;
+let isEventBusAttached = false;
 
 // ─── Shared Config ────────────────────────────────────────────────────────────
 const FONT = "'Space Grotesk', system-ui, sans-serif";
@@ -64,7 +66,7 @@ function getAlphaColor(alpha) {
 
 // ─── Chart A: Departure Delay Profile ─────────────────────────────────────────
 function buildProfileData(date) {
-  const journey = TRAIN_18238.journeys[date] || [];
+  const journey = currentTrainData.journeys[date] || [];
   const dataMap = {};
   journey.forEach(r => { dataMap[r.stationCode] = r; });
 
@@ -72,7 +74,7 @@ function buildProfileData(date) {
   const delays = [];
   const colors = [];
 
-  TRAIN_18238.route.forEach(code => {
+  currentTrainData.route.forEach(code => {
     const row = dataMap[code];
     const d = row ? row.delayDeparture : null;
     labels.push(code);
@@ -84,7 +86,14 @@ function buildProfileData(date) {
 }
 
 function initProfileChart(date) {
-  const ctx = document.getElementById('chart-profile').getContext('2d');
+  const canvas = document.getElementById('chart-profile');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  if (chartProfile) {
+    chartProfile.destroy();
+  }
+
   const { labels, delays, colors } = buildProfileData(date);
 
   chartProfile = new Chart(ctx, {
@@ -245,7 +254,7 @@ const BRACKETS = [
 ];
 
 function buildDistData(date) {
-  const journey = TRAIN_18238.journeys[date] || [];
+  const journey = currentTrainData.journeys[date] || [];
   const delays = journey.map(r => r.delayDeparture).filter(d => d !== null && d !== undefined);
 
   const counts = BRACKETS.map(b => ({
@@ -262,7 +271,14 @@ function buildDistData(date) {
 }
 
 function initDistChart(date) {
-  const ctx = document.getElementById('chart-distribution').getContext('2d');
+  const canvas = document.getElementById('chart-distribution');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  if (chartDist) {
+    chartDist.destroy();
+  }
+
   const { labels, data, colors } = buildDistData(date);
 
   chartDist = new Chart(ctx, {
@@ -332,7 +348,7 @@ function updateDistChart(date) {
 
 // ─── Chart C: Segment Alpha ───────────────────────────────────────────────────
 function buildAlphaData(date) {
-  const journey = TRAIN_18238.journeys[date] || [];
+  const journey = currentTrainData.journeys[date] || [];
   const dataMap = {};
   journey.forEach(r => { dataMap[r.stationCode] = r; });
 
@@ -340,7 +356,7 @@ function buildAlphaData(date) {
   const alphas = [];
   const colors = [];
 
-  const route = TRAIN_18238.route;
+  const route = currentTrainData.route;
   for (let i = 0; i < route.length - 1; i++) {
     const fromCode = route[i];
     const toCode = route[i + 1];
@@ -361,7 +377,14 @@ function buildAlphaData(date) {
 }
 
 function initAlphaChart(date) {
-  const ctx = document.getElementById('chart-alpha').getContext('2d');
+  const canvas = document.getElementById('chart-alpha');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  if (chartAlpha) {
+    chartAlpha.destroy();
+  }
+
   const { labels, alphas, colors } = buildAlphaData(date);
 
   chartAlpha = new Chart(ctx, {
@@ -444,6 +467,7 @@ function updateAlphaChart(date) {
 /** Zero-line plugin for alpha chart */
 function addZeroLinePlugin(chart) {
   // Use annotation via custom afterDraw to avoid needing the plugin
+  if (chart.options.plugins.zeroLine) return; // avoid registering twice on redraw
   const zeroLinePlugin = {
     id: 'zeroLine',
     afterDraw(chart) {
@@ -468,6 +492,7 @@ function addZeroLinePlugin(chart) {
 
 /** Threshold lines for profile chart (+10, +30) */
 function addThresholdPlugin(chart) {
+  if (chart.options.plugins.threshLines) return;
   const threshPlugin = {
     id: 'threshLines',
     afterDraw(c) {
@@ -494,22 +519,32 @@ function addThresholdPlugin(chart) {
       draw(30, '#ef4444', [4, 4], '+30m');
     },
   };
+  chart.options.plugins.threshLines = {};
   Chart.register(threshPlugin);
   chart.update();
 }
 
 // ─── Public Init ──────────────────────────────────────────────────────────────
-export function initCharts() {
-  const dates = Object.keys(TRAIN_18238.journeys).sort();
-  const initialDate = dates[dates.length - 1];
+export function initCharts(trainData) {
+  currentTrainData = trainData;
+  const dates = Object.keys(currentTrainData.journeys).sort();
+  let initialDate = null;
+  if (dates.length > 0) {
+    initialDate = dates[dates.length - 1];
+  }
 
-  initProfileChart(initialDate);
-  initDistChart(initialDate);
-  initAlphaChart(initialDate);
+  if (initialDate) {
+    initProfileChart(initialDate);
+    initDistChart(initialDate);
+    initAlphaChart(initialDate);
+  }
 
-  EventBus.on('journeyChange', (date) => {
-    updateProfileChart(date);
-    updateDistChart(date);
-    updateAlphaChart(date);
-  });
+  if (!isEventBusAttached) {
+    EventBus.on('journeyChange', (date) => {
+      updateProfileChart(date);
+      updateDistChart(date);
+      updateAlphaChart(date);
+    });
+    isEventBusAttached = true;
+  }
 }

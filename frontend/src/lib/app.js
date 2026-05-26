@@ -6,7 +6,8 @@
  */
 import { EventBus } from './eventbus.js';
 export { EventBus } from './eventbus.js';
-import { TRAIN_18238 } from '../data/train_18238.js';
+
+export let currentTrainData = null;
 
 // ─── App Init ─────────────────────────────────────────────────────────────────
 import { initHeader } from '../components/header.js';
@@ -14,23 +15,53 @@ import { initMap } from '../components/map.js';
 import { initCharts } from '../components/charts.js';
 import { initAmplifiers } from '../components/amplifiers.js';
 
-function init() {
-  // Perturb all initial static journeys
-  Object.keys(TRAIN_18238.journeys).forEach(date => {
-    perturbJourneyData(TRAIN_18238.journeys[date]);
+async function switchTrain(trainNo) {
+  try {
+    const module = await import(`../data/train_${trainNo}.js`);
+    currentTrainData = module[`TRAIN_${trainNo}`];
+    
+    // Perturb all initial static journeys
+    Object.keys(currentTrainData.journeys).forEach(date => {
+      perturbJourneyData(currentTrainData.journeys[date]);
+    });
+
+    // Update Header Text
+    document.getElementById('train-number-label').textContent = currentTrainData.trainNumber;
+    document.getElementById('train-name-label').textContent = currentTrainData.trainName;
+    const rt = currentTrainData.route;
+    document.getElementById('train-route-label').textContent = `${rt[0]} → ${rt[rt.length - 1]}`;
+
+    // 1. Header (populates select + stats)
+    initHeader(currentTrainData);
+
+    // 2. Map (Leaflet + markers)
+    initMap(currentTrainData);
+
+    // 3. Charts (Chart.js)
+    initCharts(currentTrainData);
+
+    // 4. Delay Amplifiers Widget
+    initAmplifiers(currentTrainData);
+    
+    // Trigger initial load for the last available date in the newly populated dropdown
+    const select = document.getElementById('journey-date-select');
+    if (select.options.length > 0) {
+      select.value = select.options[select.options.length - 1].value;
+      loadJourneyData(select.value);
+    }
+  } catch (err) {
+    console.error("Failed to load train data:", err);
+    showToast(`Failed to load train ${trainNo}`, 'error');
+  }
+}
+
+async function init() {
+  const trainSelect = document.getElementById('train-select');
+  trainSelect.addEventListener('change', () => {
+    switchTrain(trainSelect.value);
   });
-
-  // 1. Header (populates select + stats)
-  initHeader();
-
-  // 2. Map (Leaflet + markers)
-  initMap();
-
-  // 3. Charts (Chart.js)
-  initCharts();
-
-  // 4. Delay Amplifiers Widget
-  initAmplifiers();
+  
+  await switchTrain(trainSelect.value);
 
   // 5. Wire up select → dynamic loader
   const select = document.getElementById('journey-date-select');
@@ -125,7 +156,7 @@ function showToast(message, type = 'success') {
  */
 async function loadJourneyData(date) {
   // If data already exists, simply notify components
-  if (TRAIN_18238.journeys[date] && TRAIN_18238.journeys[date].length > 0) {
+  if (currentTrainData.journeys[date] && currentTrainData.journeys[date].length > 0) {
     EventBus.emit('journeyChange', date);
     return;
   }
@@ -144,7 +175,7 @@ async function loadJourneyData(date) {
     showToast(`Fetching live data for ${date}...`, 'success');
     console.log(`[Live Tracking] Fetching live data for date ${date} via proxy...`);
     
-    const response = await fetch(`/api/live?journeyDate=${date}`);
+    const response = await fetch(`/api/live?journeyDate=${date}&trainNo=${currentTrainData.trainNumber}`);
     
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
@@ -162,7 +193,7 @@ async function loadJourneyData(date) {
     perturbJourneyData(formattedJourney);
 
     // Dynamic loading into the global dataset
-    TRAIN_18238.journeys[date] = formattedJourney;
+    currentTrainData.journeys[date] = formattedJourney;
     
     // Notify map, charts, stats, and widgets
     EventBus.emit('journeyChange', date);
@@ -172,7 +203,7 @@ async function loadJourneyData(date) {
     showToast(err.message || `Could not fetch live data for ${date}.`, 'error');
     
     // Falling back to the last valid static option in the dropdown list
-    const validDates = Object.keys(TRAIN_18238.journeys).filter(d => TRAIN_18238.journeys[d] && TRAIN_18238.journeys[d].length > 0);
+    const validDates = Object.keys(currentTrainData.journeys).filter(d => currentTrainData.journeys[d] && currentTrainData.journeys[d].length > 0);
     if (validDates.length > 0) {
       select.value = validDates[validDates.length - 1];
       EventBus.emit('journeyChange', select.value);
@@ -204,7 +235,7 @@ function setupLiveTracking() {
     try {
       console.log('[Live Tracking] Fetching live data via local server proxy...');
       
-      const response = await fetch('/api/live');
+      const response = await fetch(`/api/live?trainNo=${currentTrainData.trainNumber}`);
       
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -223,7 +254,7 @@ function setupLiveTracking() {
       perturbJourneyData(formattedJourney);
 
       // Dynamic loading into the global dataset
-      TRAIN_18238.journeys[journeyDate] = formattedJourney;
+      currentTrainData.journeys[journeyDate] = formattedJourney;
       
       // Add selection option if not already in dropdown selector
       let optExists = false;

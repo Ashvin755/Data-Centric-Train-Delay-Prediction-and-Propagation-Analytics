@@ -1,21 +1,24 @@
 /**
  * header.js — Train badge & journey date selector
  */
-import { TRAIN_18238 } from '../data/train_18238.js';
 import { EventBus } from '../lib/eventbus.js';
 
-const journeyDates = Object.keys(TRAIN_18238.journeys).sort();
+let currentTrainData = null;
+let isEventBusAttached = false;
 
 /**
  * Populate the journey date dropdown
  */
-export function initHeader() {
+export function initHeader(trainData) {
+  currentTrainData = trainData;
+  const journeyDates = Object.keys(currentTrainData.journeys).sort();
   const select = document.getElementById('journey-date-select');
+  
+  select.innerHTML = '';
 
   journeyDates.forEach(date => {
     const opt = document.createElement('option');
     opt.value = date;
-    // Format: "Fri, 17 Jan 2026"
     const d = new Date(date + 'T00:00:00');
     opt.textContent = d.toLocaleDateString('en-IN', {
       weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
@@ -33,29 +36,27 @@ export function initHeader() {
   select.appendChild(opt26);
 
   // Default to the most recent date
-  select.value = journeyDates[journeyDates.length - 1];
+  if (journeyDates.length > 0) {
+    select.value = journeyDates[journeyDates.length - 1];
+    updateStats(select.value);
+  } else {
+    updateStats(null);
+  }
 
-  select.addEventListener('change', () => {
-    // Note: The main listener in app.js will handle fetching if necessary.
-    // We only emit here as a fallback/safety net for pre-loaded dates.
-    if (TRAIN_18238.journeys[select.value]) {
-      EventBus.emit('journeyChange', select.value);
-    }
-  });
-
-  // Initial stats
-  updateStats(select.value);
-
-  EventBus.on('journeyChange', (date) => {
-    updateStats(date);
-  });
+  if (!isEventBusAttached) {
+    EventBus.on('journeyChange', (date) => {
+      updateStats(date);
+    });
+    isEventBusAttached = true;
+  }
 }
 
 /**
  * Update header stat chips for a journey date
  */
 function updateStats(date) {
-  const journey = TRAIN_18238.journeys[date];
+  if (!currentTrainData || !date) return;
+  const journey = currentTrainData.journeys[date];
   if (!journey) return;
 
   const delays = journey
@@ -68,7 +69,6 @@ function updateStats(date) {
     ? Math.round((delays.filter(d => d <= 5).length / delays.length) * 100)
     : null;
 
-  // Delay Recovery = Max Delay - Delay of the last station (BSP)
   const lastStation = journey[journey.length - 1];
   const lastStationDelay = lastStation
     ? (lastStation.delayArrival !== null ? lastStation.delayArrival : lastStation.delayDeparture)
@@ -89,8 +89,9 @@ function updateStats(date) {
   document.getElementById('val-recovery').textContent =
     delayRecovery !== null ? `${delayRecovery > 0 ? '+' : ''}${Math.round(delayRecovery)}m` : '—';
 
+  const totalRoute = currentTrainData.route.length;
   document.getElementById('val-stations').textContent =
-    `${journey.length}/85`;
+    `${journey.length}/${totalRoute}`;
 }
 
 /**

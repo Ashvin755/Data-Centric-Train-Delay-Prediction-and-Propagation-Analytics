@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rail Delay Dashboard — Chhattisgarh Express 18238</title>
-  <meta name="description" content="Interactive dashboard visualizing delays of Chhattisgarh Express (18238) across its 85-station route from Amritsar to Bilaspur." />
+  <title>Rail Delay Dashboard</title>
+  <meta name="description" content="Interactive dashboard visualizing train delays across its route." />
 
   <!-- Google Fonts: Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,12 +23,21 @@
   <!-- ===== HEADER ===== -->
   <header id="app-header">
     <div id="train-badge">
-      <span id="train-number-label">18238</span>
-      <span id="train-name-label">Chhattisgarh Express</span>
-      <span id="train-route-label">ASR → BSP</span>
+      <span id="train-number-label">----</span>
+      <span id="train-name-label">Loading...</span>
+      <span id="train-route-label"></span>
     </div>
 
     <div id="journey-selector-block">
+      <label for="train-select" id="train-label">Train</label>
+      <div id="select-wrapper" style="margin-right: 15px;">
+        <select id="train-select" aria-label="Select train">
+          <option value="18238">18238 - Chhattisgarh Exp</option>
+          <option value="12137">12137 - Punjab Mail</option>
+        </select>
+        <span id="select-arrow">▾</span>
+      </div>
+
       <label for="journey-date-select" id="journey-label">Journey Date</label>
       <div id="select-wrapper">
         <select id="journey-date-select" aria-label="Select journey date"></select>
