@@ -104,11 +104,34 @@ function renderGradientLine(date) {
 
   const route = TRAIN_18238.route;
 
-  // ── 1. Draw colored segments between consecutive stations ──────────────────
+  // 1. Find the index of the train's current station.
+  // It is the last station in route order that has actualArrival or actualDeparture !== null AND <= current time
+  let currentStationIndex = -1;
+  const nowSecs = Date.now() / 1000;
+  
+  for (let i = 0; i < route.length; i++) {
+    const code = route[i];
+    const row = dataMap[code];
+    if (row) {
+      const hasArrived = row.actualArrival !== null && row.actualArrival <= nowSecs;
+      const hasDeparted = row.actualDeparture !== null && row.actualDeparture <= nowSecs;
+      if (hasArrived || hasDeparted) {
+        currentStationIndex = i;
+      }
+    }
+  }
+
+  // Fallbacks:
+  // If the journey has no tracking details yet, default to the start (ASR)
+  // If it's a dynamic live journey, we display the last reached station.
+  if (currentStationIndex === -1 && route.length > 0) {
+    currentStationIndex = 0;
+  }
+
+  // ── 2. Draw segments between consecutive stations ──────────────────────────
   //
-  // For each pair (A→B) we draw a thick polyline.
-  // We interpolate the color between A's delay color and B's delay color
-  // by splitting the segment into ~5 sub-segments for a smooth gradient look.
+  // Completed segments are drawn as thick colored polylines (with gradients).
+  // Upcoming segments (yet to come) are drawn as faded dashed grey lines.
   //
   const SUB_STEPS = 6; // number of sub-segments per station pair
   const LINE_WEIGHT = 6;
@@ -127,43 +150,103 @@ function renderGradientLine(date) {
     const colorA = delayColor(fromRow ? fromRow.delayDeparture : null);
     const colorB = delayColor(toRow   ? toRow.delayDeparture   : null);
 
-    // Interpolate sub-segments A→B
-    for (let s = 0; s < SUB_STEPS; s++) {
-      const t0 = s / SUB_STEPS;
-      const t1 = (s + 1) / SUB_STEPS;
+    // Style upcoming segments as faded dashed grey lines
+    const isUpcoming = i >= currentStationIndex;
 
-      const lat0 = fromMeta.lat + (toMeta.lat - fromMeta.lat) * t0;
-      const lon0 = fromMeta.lon + (toMeta.lon - fromMeta.lon) * t0;
-      const lat1 = fromMeta.lat + (toMeta.lat - fromMeta.lat) * t1;
-      const lon1 = fromMeta.lon + (toMeta.lon - fromMeta.lon) * t1;
-
-      const segColor = lerpColor(colorA, colorB, (t0 + t1) / 2);
-
-      const seg = L.polyline([[lat0, lon0], [lat1, lon1]], {
-        color: segColor,
-        weight: LINE_WEIGHT,
-        opacity: 0.92,
+    if (isUpcoming) {
+      const upcomingSeg = L.polyline([[fromMeta.lat, fromMeta.lon], [toMeta.lat, toMeta.lon]], {
+        color: '#94a3b8',
+        weight: 5,
+        opacity: 0.65,
+        dashArray: '8, 8',
         lineCap: 'round',
-        lineJoin: 'round',
-        interactive: false, // don't intercept mouse on line
+        interactive: false,
       }).addTo(map);
+      layers.push(upcomingSeg);
+    } else {
+      // Interpolate sub-segments A→B (gradient look)
+      for (let s = 0; s < SUB_STEPS; s++) {
+        const t0 = s / SUB_STEPS;
+        const t1 = (s + 1) / SUB_STEPS;
 
-      layers.push(seg);
+        const lat0 = fromMeta.lat + (toMeta.lat - fromMeta.lat) * t0;
+        const lon0 = fromMeta.lon + (toMeta.lon - fromMeta.lon) * t0;
+        const lat1 = fromMeta.lat + (toMeta.lat - fromMeta.lat) * t1;
+        const lon1 = fromMeta.lon + (toMeta.lon - fromMeta.lon) * t1;
+
+        const segColor = lerpColor(colorA, colorB, (t0 + t1) / 2);
+
+        const seg = L.polyline([[lat0, lon0], [lat1, lon1]], {
+          color: segColor,
+          weight: LINE_WEIGHT,
+          opacity: 0.92,
+          lineCap: 'round',
+          lineJoin: 'round',
+          interactive: false, // don't intercept mouse on line
+        }).addTo(map);
+
+        layers.push(seg);
+      }
     }
   }
 
-  // ── 2. Invisible hit-area markers on each station ─────────────────────────
+  // ── 3. Draw a custom pulsing train icon at the current station ────────────
+  if (currentStationIndex !== -1 && currentStationIndex < route.length) {
+    const currentCode = route[currentStationIndex];
+    const currentMeta = STATIONS[currentCode];
+    
+    if (currentMeta) {
+      const trainIcon = L.divIcon({
+        className: 'custom-train-icon',
+        html: `
+          <div class="train-pulse-ring"></div>
+          <div class="train-emoji-badge">🚂</div>
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+      });
+
+      const trainMarker = L.marker([currentMeta.lat, currentMeta.lon], {
+        icon: trainIcon,
+        zIndexOffset: 1000,
+        interactive: true,
+      }).addTo(map);
+
+      // Neo-brutalist custom styled popup on click
+      trainMarker.bindPopup(`
+        <div style="font-family:'Space Grotesk', sans-serif; padding:2px">
+          <strong style="font-size:13px; text-transform:uppercase; display:block; margin-bottom:4px">🚂 Chhattisgarh Express</strong>
+          <span style="font-size:11px; color:#555">Current Location: <strong>${currentMeta.name} (${currentCode})</strong></span>
+        </div>
+      `, {
+        closeButton: false,
+        className: 'train-popup'
+      });
+
+      layers.push(trainMarker);
+    }
+  }
+
+  // ── 4. Invisible hit-area markers on each station ─────────────────────────
   //
   // These are transparent large circles that capture hover events for
   // the tooltip. No visual presence — the gradient line is the visual.
   //
   const HIT_RADIUS = 8; // pixels
 
-  route.forEach(code => {
+  route.forEach((code, index) => {
     const stationMeta = STATIONS[code];
     if (!stationMeta) return;
 
     const row = dataMap[code] || null;
+
+    // Determine status relative to current station
+    let status = 'Passed';
+    if (index === currentStationIndex) {
+      status = 'Current';
+    } else if (index > currentStationIndex) {
+      status = 'Upcoming';
+    }
 
     const hitIcon = L.divIcon({
       className: '',
@@ -188,6 +271,7 @@ function renderGradientLine(date) {
       showTooltip(e.originalEvent, {
         code,
         name: stationMeta.name,
+        status, // Pass calculated status
         delayArrival:        row ? row.delayArrival        : null,
         delayDeparture:      row ? row.delayDeparture      : null,
         scheduledArrival:    row ? row.scheduledArrival    : null,
