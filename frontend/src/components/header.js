@@ -13,24 +13,27 @@ export function initHeader(trainData) {
   currentTrainData = trainData;
   // Use _journeyDates from the DB response (journeys map starts empty until lazy-loaded)
   const journeyDates = (currentTrainData._journeyDates || Object.keys(currentTrainData.journeys)).slice().sort();
-  const select = document.getElementById('journey-date-select');
+  const input = document.getElementById('journey-date-picker');
 
-  select.innerHTML = '';
+  // Destroy existing flatpickr instance if we switch trains
+  if (input._flatpickr) {
+    input._flatpickr.destroy();
+  }
 
-  journeyDates.forEach(date => {
-    const opt = document.createElement('option');
-    opt.value = date;
-    const d = new Date(date + 'T00:00:00');
-    opt.textContent = d.toLocaleDateString('en-IN', {
-      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
-    });
-    select.appendChild(opt);
+  // Initialize Flatpickr calendar
+  flatpickr(input, {
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "D, j M, Y",
+    enable: journeyDates.length > 0 ? journeyDates : [new Date()],
+    minDate: "2026-01-17",
+    defaultDate: journeyDates.length > 0 ? journeyDates[journeyDates.length - 1] : null,
+    disableMobile: true, // Uses our custom CSS instead of native mobile pickers
   });
 
   // Default to the most recent date (dropdown auto-populated from DB dates)
   if (journeyDates.length > 0) {
-    select.value = journeyDates[journeyDates.length - 1];
-    updateStats(select.value);
+    updateStats(journeyDates[journeyDates.length - 1]);
   } else {
     updateStats(null);
   }

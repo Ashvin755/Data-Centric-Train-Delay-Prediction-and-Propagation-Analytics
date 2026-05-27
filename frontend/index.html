@@ -18,6 +18,10 @@
   <link rel="stylesheet" href="src/styles/main.css?v=4" />
   <link rel="stylesheet" href="src/styles/map.css?v=3" />
   <link rel="stylesheet" href="src/styles/charts.css?v=3" />
+
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
 </head>
 <body>
   <!-- ===== HEADER ===== -->
@@ -46,10 +50,10 @@
         <span id="select-arrow">▾</span>
       </div>
 
-      <label for="journey-date-select" id="journey-label">Journey Date</label>
-      <div id="select-wrapper">
-        <select id="journey-date-select" aria-label="Select journey date"></select>
-        <span id="select-arrow">▾</span>
+      <label for="journey-date-picker" id="journey-label">Journey Date</label>
+      <div id="date-picker-wrapper" style="position: relative;">
+        <input type="text" id="journey-date-picker" placeholder="Select Date" readonly style="cursor: pointer; background: #fff; padding-right: 30px;" />
+        <span id="calendar-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">📅</span>
       </div>
       <button id="live-tracking-btn" class="live-btn" aria-label="Fetch live train tracking">
         <span class="live-pulse"></span>
@@ -190,10 +194,14 @@
   <!-- Scripts -->
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
-  <!-- App Entry Point (ES Modules) -->
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <!-- Main App Script -->
   <script type="module" src="src/lib/app.js?v=2"></script>
 </body>
 </html>

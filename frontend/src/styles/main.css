@@ -141,7 +141,7 @@ html, body {
   align-items: center;
 }
 
-#journey-date-select {
+#journey-date-picker {
   appearance: none;
   -webkit-appearance: none;
   background: var(--surface);
@@ -158,8 +158,8 @@ html, body {
   transition: box-shadow 0.1s;
 }
 
-#journey-date-select:hover,
-#journey-date-select:focus {
+#journey-date-picker:hover,
+#journey-date-picker:focus {
   box-shadow: 3px 3px 0 var(--border);
 }
 

@@ -54,10 +54,9 @@ async function switchTrain(trainNo) {
     initAmplifiers(currentTrainData);
 
     // 5. Auto-select and load the most recent available date
-    const select = document.getElementById('journey-date-select');
-    if (select.options.length > 0) {
-      select.value = select.options[select.options.length - 1].value;
-      await loadJourneyData(select.value);
+    const input = document.getElementById('journey-date-picker');
+    if (currentTrainData._journeyDates && currentTrainData._journeyDates.length > 0) {
+      await loadJourneyData(currentTrainData._journeyDates[currentTrainData._journeyDates.length - 1]);
     }
   } catch (err) {
     console.error("Failed to load train data:", err);
@@ -74,10 +73,12 @@ async function init() {
   
   await switchTrain(trainSelect.value);
 
-  // 5. Wire up select → dynamic loader
-  const select = document.getElementById('journey-date-select');
-  select.addEventListener('change', () => {
-    loadJourneyData(select.value);
+  // 5. Wire up input → dynamic loader
+  const input = document.getElementById('journey-date-picker');
+  input.addEventListener('change', () => {
+    if (input.value) {
+      loadJourneyData(input.value);
+    }
   });
 
   // 6. Setup direct live tracking API integration
@@ -175,7 +176,7 @@ async function loadJourneyData(date) {
     return;
   }
 
-  const select = document.getElementById('journey-date-select');
+  const input = document.getElementById('journey-date-picker');
   const liveBtn = document.getElementById('live-tracking-btn');
 
   // Put UI into loading state
@@ -254,8 +255,11 @@ async function loadJourneyData(date) {
       d => currentTrainData.journeys[d] && currentTrainData.journeys[d].length > 0
     );
     if (validDates.length > 0) {
-      select.value = validDates[validDates.length - 1];
-      EventBus.emit('journeyChange', select.value);
+      const lastValid = validDates[validDates.length - 1];
+      if (input._flatpickr) {
+        input._flatpickr.setDate(lastValid, false);
+      }
+      EventBus.emit('journeyChange', lastValid);
     }
   } finally {
     if (liveBtn) {
@@ -272,7 +276,7 @@ async function loadJourneyData(date) {
  */
 function setupLiveTracking() {
   const liveBtn = document.getElementById('live-tracking-btn');
-  const select = document.getElementById('journey-date-select');
+  const input = document.getElementById('journey-date-picker');
   if (!liveBtn) return;
 
   liveBtn.addEventListener('click', async () => {
@@ -305,26 +309,22 @@ function setupLiveTracking() {
       // Dynamic loading into the global dataset
       currentTrainData.journeys[journeyDate] = formattedJourney;
       
-      // Add selection option if not already in dropdown selector
-      let optExists = false;
-      for (let i = 0; i < select.options.length; i++) {
-        if (select.options[i].value === journeyDate) {
-          optExists = true;
-          break;
+      // Update the flatpickr picker with the live date if it wasn't there
+      if (input._flatpickr) {
+        const enabledDates = input._flatpickr.config.enable || [];
+        const exists = enabledDates.some(d => {
+          if (typeof d === 'string') return d === journeyDate;
+          if (d instanceof Date) return flatpickr.formatDate(d, 'Y-m-d') === journeyDate;
+          return false;
+        });
+        
+        if (!exists) {
+          enabledDates.push(journeyDate);
+          input._flatpickr.set('enable', enabledDates);
         }
+        
+        input._flatpickr.setDate(journeyDate, false);
       }
-      
-      if (!optExists) {
-        const opt = document.createElement('option');
-        opt.value = journeyDate;
-        const d = new Date(journeyDate + 'T00:00:00');
-        opt.textContent = `🔴 Live: ${d.toLocaleDateString('en-IN', {
-          day: 'numeric', month: 'short', year: 'numeric'
-        })}`;
-        select.appendChild(opt);
-      }
-      
-      select.value = journeyDate;
       
       // Notify map, charts, stats, and widgets
       EventBus.emit('journeyChange', journeyDate);

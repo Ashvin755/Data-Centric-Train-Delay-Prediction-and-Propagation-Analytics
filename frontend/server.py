@@ -79,9 +79,9 @@ class CustomHandler(SimpleHTTPRequestHandler):
 
             train_info = train_rows[0]
 
-            # 2. Fetch distinct journey_dates from rail_data for this train
+            # 2. Fetch distinct journey_dates from journey_status_flags for this train
             dates_resp = requests.get(
-                f"{SUPABASE_URL}/rest/v1/rail_data",
+                f"{SUPABASE_URL}/rest/v1/journey_status_flags",
                 headers={**supabase_headers(), "Accept": "application/json"},
                 params={
                     "train_no": f"eq.{train_no}",
