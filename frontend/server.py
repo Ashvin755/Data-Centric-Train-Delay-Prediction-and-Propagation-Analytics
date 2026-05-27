@@ -36,7 +36,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 journey_date = datetime.now(ist_tz).strftime("%Y-%m-%d")
             
             # 2. Get API key from environment, fallback to active key
-            api_key = os.environ.get("RAILRADAR_API_KEY_ONE_DAY") or "rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i"
+            api_key = os.environ.get("RAILRADAR_API_KEY_ONE_DAY")
             
             # 3. Create scraper session to bypass Cloudflare
             scraper = cloudscraper.create_scraper(
