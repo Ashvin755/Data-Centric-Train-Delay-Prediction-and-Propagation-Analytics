@@ -15,13 +15,12 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <!-- Application Styles -->
-  <link rel="stylesheet" href="src/styles/main.css?v=4" />
+  <link rel="stylesheet" href="src/styles/main.css?v=7" />
   <link rel="stylesheet" href="src/styles/map.css?v=3" />
   <link rel="stylesheet" href="src/styles/charts.css?v=3" />
 
   <!-- Flatpickr CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
 </head>
 <body>
   <!-- ===== HEADER ===== -->
@@ -36,6 +35,7 @@
       <label for="train-select" id="train-label">Train</label>
       <div id="select-wrapper" style="margin-right: 15px;">
         <select id="train-select" aria-label="Select train">
+
           <option value="11077">11077 - Jhelum Express</option>
           <option value="11078">11078 - Jhelum Express</option>
           <option value="11605">11605 - Bhopal - Bina MEMU Express</option>
@@ -52,7 +52,7 @@
 
       <label for="journey-date-picker" id="journey-label">Journey Date</label>
       <div id="date-picker-wrapper" style="position: relative;">
-        <input type="text" id="journey-date-picker" placeholder="Select Date" readonly style="cursor: pointer; background: #fff; padding-right: 30px;" />
+        <input type="text" id="journey-date-picker" placeholder="Select Date" readonly />
         <span id="calendar-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">📅</span>
       </div>
       <button id="live-tracking-btn" class="live-btn" aria-label="Fetch live train tracking">
