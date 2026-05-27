@@ -228,8 +228,17 @@ async function loadJourneyData(date) {
       if (!formattedJourney || formattedJourney.length === 0) {
         throw new Error('No tracking route points returned.');
       }
+    }
 
-      // Perturb only live/future data
+    // Determine if we are dealing with live data (within last 4 days)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const reqDateObj = new Date(date);
+    reqDateObj.setHours(0, 0, 0, 0);
+    const diff = Math.round((today - reqDateObj) / (1000 * 60 * 60 * 24));
+
+    if (diff >= -1 && diff <= 4) {
+      // Perturb live/future data to simulate real-time delays
       perturbJourneyData(formattedJourney);
     }
 
