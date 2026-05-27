@@ -75,8 +75,8 @@ Ensure these files are in your repository:
    Navigate to service → Environment tab → Add variables:
    
    ```
-   RAILRADAR_API_KEY_ONE_DAY=rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i
-   RAILRADAR_API_KEY_MULTI_DAY=rr_b9mavijtcqg6b47m810pop9n2k0t1lt8
+   RAILRADAR_API_KEY_ONE_DAY=rr_xxxxxxxxxxxxxxxxxxxxxxxx
+   RAILRADAR_API_KEY_MULTI_DAY=rr_yyyyyyyyyyyyyyyyyyyyyyyy
    SUPABASE_URL=https://cjnceqnctjpcqinvxfwg.supabase.co
    SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    ```
@@ -101,8 +101,8 @@ If blueprint doesn't work, create service manually:
    - **Plan**: `Free`
 4. **Environment Variables**:
    ```
-   RAILRADAR_API_KEY_ONE_DAY=rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i
-   RAILRADAR_API_KEY_MULTI_DAY=rr_b9mavijtcqg6b47m810pop9n2k0t1lt8
+   RAILRADAR_API_KEY_ONE_DAY=rr_xxxxxxxxxxxxxxxxxxxxxxxx
+   RAILRADAR_API_KEY_MULTI_DAY=rr_yyyyyyyyyyyyyyyyyyyyyyyy
    SUPABASE_URL=https://cjnceqnctjpcqinvxfwg.supabase.co
    SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    MAX_FLAG_THRESHOLD=6
@@ -315,8 +315,8 @@ startCommand: gunicorn main:app --bind 0.0.0.0:$PORT --timeout 120
 
 | Variable | Required | Example | Description |
 |----------|----------|---------|-------------|
-| RAILRADAR_API_KEY_ONE_DAY | Yes | `rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i` | RailRadar API key for one-day trains |
-| RAILRADAR_API_KEY_MULTI_DAY | Yes | `rr_b9mavijtcqg6b47m810pop9n2k0t1lt8` | RailRadar API key for multi-day trains |
+| RAILRADAR_API_KEY_ONE_DAY | Yes | `rr_xxxxxxxxxxxxxxxxxxxxxxxx` | RailRadar API key for one-day trains |
+| RAILRADAR_API_KEY_MULTI_DAY | Yes | `rr_yyyyyyyyyyyyyyyyyyyyyyyy` | RailRadar API key for multi-day trains |
 | SUPABASE_URL | Yes | `https://xxx.supabase.co` | Supabase project URL |
 | SUPABASE_KEY | Yes | `eyJhbG...` | Supabase anon/public key |
 | MAX_FLAG_THRESHOLD | No | `6` (default) | Max polls before abandoning journey |

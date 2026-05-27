@@ -39,7 +39,7 @@ Complete these steps before deploying to Render.
 ```bash
 SUPABASE_URL=https://cnxkhvzrfjbyjsttyjam.supabase.co
 SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-RAILRADAR_API_KEY=rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i
+RAILRADAR_API_KEY=rr_xxxxxxxxxxxxxxxxxxxxxxxx
 MAX_FLAG_THRESHOLD=6
 TIMEZONE=Asia/Kolkata
 FLASK_ENV=production

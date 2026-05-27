@@ -119,7 +119,7 @@ Follow the detailed guide in `DEPLOYMENT.md`:
 When deploying to Render, you'll need these (from your `.env` file):
 
 ```bash
-RAILRADAR_API_KEY=rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i
+RAILRADAR_API_KEY=rr_xxxxxxxxxxxxxxxxxxxxxxxx
 SUPABASE_URL=https://cnxkhvzrfjbyjsttyjam.supabase.co
 SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 MAX_FLAG_THRESHOLD=6
