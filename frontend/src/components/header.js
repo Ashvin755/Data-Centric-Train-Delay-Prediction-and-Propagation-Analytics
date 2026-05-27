@@ -11,9 +11,10 @@ let isEventBusAttached = false;
  */
 export function initHeader(trainData) {
   currentTrainData = trainData;
-  const journeyDates = Object.keys(currentTrainData.journeys).sort();
+  // Use _journeyDates from the DB response (journeys map starts empty until lazy-loaded)
+  const journeyDates = (currentTrainData._journeyDates || Object.keys(currentTrainData.journeys)).slice().sort();
   const select = document.getElementById('journey-date-select');
-  
+
   select.innerHTML = '';
 
   journeyDates.forEach(date => {
@@ -26,16 +27,7 @@ export function initHeader(trainData) {
     select.appendChild(opt);
   });
 
-  // Add the dynamic option for 26th May 2026 (Live API Data)
-  const opt26 = document.createElement('option');
-  opt26.value = '2026-05-26';
-  const d26 = new Date('2026-05-26T00:00:00');
-  opt26.textContent = `🔴 Live: ${d26.toLocaleDateString('en-IN', {
-    day: 'numeric', month: 'short', year: 'numeric'
-  })}`;
-  select.appendChild(opt26);
-
-  // Default to the most recent date
+  // Default to the most recent date (dropdown auto-populated from DB dates)
   if (journeyDates.length > 0) {
     select.value = journeyDates[journeyDates.length - 1];
     updateStats(select.value);

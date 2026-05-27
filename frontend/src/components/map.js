@@ -85,7 +85,9 @@ export function initMap(trainData) {
     lineJoin: 'round',
   }).addTo(map);
 
-  map.fitBounds(basePolyline.getBounds(), { padding: [30, 30] });
+  if (routeLatLngs.length > 0) {
+    map.fitBounds(basePolyline.getBounds(), { padding: [30, 30] });
+  }
 
   if (!isEventBusAttached) {
     EventBus.on('journeyChange', renderGradientLine);
@@ -115,6 +117,14 @@ function renderGradientLine(date) {
 
   const journey = currentTrainData.journeys[date];
   if (!journey) return;
+
+  if (basePolyline && basePolyline.getLatLngs().length === 0) {
+    const routeLatLngs = buildRouteLatLngs();
+    if (routeLatLngs.length > 0) {
+      basePolyline.setLatLngs(routeLatLngs);
+      map.fitBounds(basePolyline.getBounds(), { padding: [30, 30] });
+    }
+  }
 
   // Build lookup: stationCode → row data
   const dataMap = {};

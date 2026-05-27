@@ -10,50 +10,61 @@ export { EventBus } from './eventbus.js';
 export let currentTrainData = null;
 
 // ─── App Init ─────────────────────────────────────────────────────────────────
-import { initHeader } from '../components/header.js';
-import { initMap } from '../components/map.js';
-import { initCharts } from '../components/charts.js';
-import { initAmplifiers } from '../components/amplifiers.js';
+import { initHeader } from '../components/header.js?v=2';
+import { initMap } from '../components/map.js?v=2';
+import { initCharts } from '../components/charts.js?v=2';
+import { initAmplifiers } from '../components/amplifiers.js?v=2';
 
 async function switchTrain(trainNo) {
   try {
-    const module = await import(`../data/train_${trainNo}.js`);
-    currentTrainData = module[`TRAIN_${trainNo}`];
-    
-    // Perturb all initial static journeys
-    Object.keys(currentTrainData.journeys).forEach(date => {
-      perturbJourneyData(currentTrainData.journeys[date]);
-    });
+    // Show loading state in the header badge
+    document.getElementById('train-number-label').textContent = trainNo;
+    document.getElementById('train-name-label').textContent = 'Loading...';
+    document.getElementById('train-route-label').textContent = '';
 
-    // Update Header Text
+    // 1. Fetch train metadata + available journey dates from Supabase via server proxy
+    const res = await fetch(`/api/supabase/train/${trainNo}`);
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || `Server returned status ${res.status} for train info.`);
+    }
+
+    const trainMeta = await res.json();
+
+    // 2. Build the currentTrainData shell (journeys loaded lazily on demand)
+    currentTrainData = {
+      trainNumber: trainMeta.trainNumber,
+      trainName: trainMeta.trainName,
+      route: [],         // populated after first journey load
+      journeys: {},      // filled lazily: { "YYYY-MM-DD": [...stations] }
+      _journeyDates: trainMeta.journeyDates,   // ordered list of available dates from DB
+    };
+
+    // 3. Update header badge text
     document.getElementById('train-number-label').textContent = currentTrainData.trainNumber;
     document.getElementById('train-name-label').textContent = currentTrainData.trainName;
-    const rt = currentTrainData.route;
-    document.getElementById('train-route-label').textContent = `${rt[0]} → ${rt[rt.length - 1]}`;
+    document.getElementById('train-route-label').textContent = ''; // cleared until first journey loads
 
-    // 1. Header (populates select + stats)
+    // 4. Init sub-components with the shell data
+    //    Pass a synthetic trainData that has journeys as an object keyed by dates
+    //    so initHeader() can build the dropdown.
     initHeader(currentTrainData);
-
-    // 2. Map (Leaflet + markers)
     initMap(currentTrainData);
-
-    // 3. Charts (Chart.js)
     initCharts(currentTrainData);
-
-    // 4. Delay Amplifiers Widget
     initAmplifiers(currentTrainData);
-    
-    // Trigger initial load for the last available date in the newly populated dropdown
+
+    // 5. Auto-select and load the most recent available date
     const select = document.getElementById('journey-date-select');
     if (select.options.length > 0) {
       select.value = select.options[select.options.length - 1].value;
-      loadJourneyData(select.value);
+      await loadJourneyData(select.value);
     }
   } catch (err) {
     console.error("Failed to load train data:", err);
-    showToast(`Failed to load train ${trainNo}`, 'error');
+    showToast(`Failed to load train ${trainNo}: ${err.message}`, 'error');
   }
 }
+
 
 async function init() {
   const trainSelect = document.getElementById('train-select');
@@ -152,10 +163,13 @@ function showToast(message, type = 'success') {
 }
 
 /**
- * Asynchronously loads a journey date. If it's not already in memory, fetches it from proxy.
+ * Asynchronously loads a journey date.
+ * - If already cached in memory, just re-emits.
+ * - If the date is in the DB (listed in _journeyDates), fetches from Supabase via the server proxy.
+ * - Falls back to the last successfully loaded journey on error.
  */
 async function loadJourneyData(date) {
-  // If data already exists, simply notify components
+  // If data already cached, simply re-notify components
   if (currentTrainData.journeys[date] && currentTrainData.journeys[date].length > 0) {
     EventBus.emit('journeyChange', date);
     return;
@@ -172,44 +186,78 @@ async function loadJourneyData(date) {
   }
 
   try {
-    showToast(`Fetching live data for ${date}...`, 'success');
-    console.log(`[Live Tracking] Fetching live data for date ${date} via proxy...`);
-    
-    const response = await fetch(`/api/live?journeyDate=${date}&trainNo=${currentTrainData.trainNumber}`);
-    
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.message || `Server returned status ${response.status}.`);
-    }
-    
-    const resData = await response.json();
-    const formattedJourney = resData.journey;
-    
-    if (!formattedJourney || formattedJourney.length === 0) {
-      throw new Error('No tracking route points returned.');
-    }
-    
-    // Perturb the freshly fetched dynamic journey
-    perturbJourneyData(formattedJourney);
+    const isDbDate = currentTrainData._journeyDates && currentTrainData._journeyDates.includes(date);
 
-    // Dynamic loading into the global dataset
+    let formattedJourney;
+
+    if (isDbDate) {
+      // ── Supabase DB fetch (historical data) ───────────────────────────────
+      showToast(`Loading journey data for ${date}...`, 'success');
+      console.log(`[DB] Fetching journey for train ${currentTrainData.trainNumber} on ${date}...`);
+
+      const response = await fetch(`/api/supabase/journey/${currentTrainData.trainNumber}/${date}`);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server returned status ${response.status}.`);
+      }
+
+      const resData = await response.json();
+      formattedJourney = resData.journey;
+
+      if (!formattedJourney || formattedJourney.length === 0) {
+        throw new Error('No station data returned from database.');
+      }
+
+    } else {
+      // ── RailRadar live fetch (for today / non-DB dates) ───────────────────
+      showToast(`Fetching live data for ${date}...`, 'success');
+      console.log(`[Live] Fetching live data for date ${date} via proxy...`);
+
+      const response = await fetch(`/api/live?journeyDate=${date}&trainNo=${currentTrainData.trainNumber}`);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server returned status ${response.status}.`);
+      }
+
+      const resData = await response.json();
+      formattedJourney = resData.journey;
+
+      if (!formattedJourney || formattedJourney.length === 0) {
+        throw new Error('No tracking route points returned.');
+      }
+
+      // Perturb only live/future data
+      perturbJourneyData(formattedJourney);
+    }
+
+    // Derive route array from station codes on first load
+    if (currentTrainData.route.length === 0 && formattedJourney && formattedJourney.length > 0) {
+      currentTrainData.route = formattedJourney.map(s => s.stationCode);
+      // Update the route label now that we have a route
+      const rt = currentTrainData.route;
+      document.getElementById('train-route-label').textContent = `${rt[0]} → ${rt[rt.length - 1]}`;
+    }
+
+    // Cache and notify
     currentTrainData.journeys[date] = formattedJourney;
-    
-    // Notify map, charts, stats, and widgets
     EventBus.emit('journeyChange', date);
     showToast(`Loaded journey for ${date}!`, 'success');
+
   } catch (err) {
     console.error(err);
-    showToast(err.message || `Could not fetch live data for ${date}.`, 'error');
-    
-    // Falling back to the last valid static option in the dropdown list
-    const validDates = Object.keys(currentTrainData.journeys).filter(d => currentTrainData.journeys[d] && currentTrainData.journeys[d].length > 0);
+    showToast(err.message || `Could not load data for ${date}.`, 'error');
+
+    // Revert to the last successfully loaded journey
+    const validDates = Object.keys(currentTrainData.journeys).filter(
+      d => currentTrainData.journeys[d] && currentTrainData.journeys[d].length > 0
+    );
     if (validDates.length > 0) {
       select.value = validDates[validDates.length - 1];
       EventBus.emit('journeyChange', select.value);
     }
   } finally {
-    // Revert loading state
     if (liveBtn) {
       liveBtn.classList.remove('loading');
       liveBtn.disabled = false;
@@ -217,6 +265,7 @@ async function loadJourneyData(date) {
     }
   }
 }
+
 
 /**
  * Attaches the click listener for the Live Tracking button to call our local proxy endpoint

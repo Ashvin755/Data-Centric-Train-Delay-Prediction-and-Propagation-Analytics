@@ -233,7 +233,10 @@ function initProfileChart(date) {
 }
 
 function updateProfileChart(date) {
-  if (!chartProfile) return;
+  if (!chartProfile) {
+    initProfileChart(date);
+    return;
+  }
   const { labels, delays, colors } = buildProfileData(date);
   chartProfile.data.labels = labels;
   chartProfile.data.datasets[0].data = delays;
@@ -338,7 +341,10 @@ function initDistChart(date) {
 }
 
 function updateDistChart(date) {
-  if (!chartDist) return;
+  if (!chartDist) {
+    initDistChart(date);
+    return;
+  }
   const { labels, data, colors } = buildDistData(date);
   chartDist.data.labels = labels;
   chartDist.data.datasets[0].data = data;
@@ -453,7 +459,10 @@ function initAlphaChart(date) {
 }
 
 function updateAlphaChart(date) {
-  if (!chartAlpha) return;
+  if (!chartAlpha) {
+    initAlphaChart(date);
+    return;
+  }
   const { labels, alphas, colors } = buildAlphaData(date);
   chartAlpha.data.labels = labels;
   chartAlpha.data.datasets[0].data = alphas;

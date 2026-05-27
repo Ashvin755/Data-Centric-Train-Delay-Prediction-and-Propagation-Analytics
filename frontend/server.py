@@ -1,13 +1,33 @@
 import os
 import json
+import re
 import sys
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse, parse_qs
 import cloudscraper
+import requests
+from dotenv import load_dotenv
+
+# Load environment variables from the root .env (one level up from frontend/)
+_ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env')
+load_dotenv(_ENV_PATH)
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
 PORT = 8000
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
+
+def supabase_headers():
+    """Return HTTP headers required for Supabase REST API calls."""
+    return {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Accept": "application/json",
+    }
+
 
 class CustomHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -15,30 +35,176 @@ class CustomHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
     def do_GET(self):
-        # Route live API requests to the proxy handler
         if self.path.startswith('/api/live'):
             self.handle_live_api()
+        elif self.path.startswith('/api/supabase/journey/'):
+            self.handle_supabase_journey()
+        elif self.path.startswith('/api/supabase/train/'):
+            self.handle_supabase_train()
         else:
             super().do_GET()
 
+    # ──────────────────────────────────────────────────────────────────────────
+    # Supabase: Train metadata + available journey dates
+    # GET /api/supabase/train/<trainNo>
+    # ──────────────────────────────────────────────────────────────────────────
+    def handle_supabase_train(self):
+        try:
+            # Extract trainNo from path  e.g. /api/supabase/train/12137
+            match = re.search(r'/api/supabase/train/(\d+)', self.path)
+            if not match:
+                self.send_error_response(400, "Missing train number in path.")
+                return
+
+            train_no = match.group(1)
+            print(f"[Supabase] Fetching train info for train {train_no}")
+
+            # 1. Fetch train_info row
+            train_resp = requests.get(
+                f"{SUPABASE_URL}/rest/v1/train_info",
+                headers={**supabase_headers(), "Accept": "application/json"},
+                params={
+                    "train_no": f"eq.{train_no}",
+                    "select": "train_no,train_name,destination_station_code,journey_type",
+                    "limit": "1",
+                },
+                timeout=10,
+            )
+            train_resp.raise_for_status()
+            train_rows = train_resp.json()
+
+            if not train_rows:
+                self.send_error_response(404, f"No train_info found for train {train_no}.")
+                return
+
+            train_info = train_rows[0]
+
+            # 2. Fetch distinct journey_dates from rail_data for this train
+            dates_resp = requests.get(
+                f"{SUPABASE_URL}/rest/v1/rail_data",
+                headers={**supabase_headers(), "Accept": "application/json"},
+                params={
+                    "train_no": f"eq.{train_no}",
+                    "select": "journey_date",
+                },
+                timeout=10,
+            )
+            dates_resp.raise_for_status()
+            date_rows = dates_resp.json()
+
+            # Deduplicate and sort dates
+            journey_dates = sorted(set(row["journey_date"] for row in date_rows))
+
+            payload = {
+                "status": "success",
+                "trainNumber": str(train_info["train_no"]),
+                "trainName": train_info["train_name"],
+                "destinationStationCode": train_info["destination_station_code"],
+                "journeyType": train_info["journey_type"],
+                "journeyDates": journey_dates,
+            }
+
+            print(f"[Supabase] Train {train_no}: '{train_info['train_name']}', {len(journey_dates)} journey dates")
+            self.send_json_response(payload)
+
+        except requests.HTTPError as e:
+            print(f"[Supabase] HTTP error fetching train info: {e}")
+            self.send_error_response(502, f"Supabase API error: {e}")
+        except Exception as e:
+            print(f"[Supabase] Error in handle_supabase_train: {e}")
+            self.send_error_response(500, str(e))
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Supabase: Station journey data for a specific train + date
+    # GET /api/supabase/journey/<trainNo>/<date>
+    # ──────────────────────────────────────────────────────────────────────────
+    def handle_supabase_journey(self):
+        try:
+            # Extract trainNo and date from path  e.g. /api/supabase/journey/12137/2026-01-17
+            match = re.search(r'/api/supabase/journey/(\d+)/([\d-]+)', self.path)
+            if not match:
+                self.send_error_response(400, "Invalid path. Expected /api/supabase/journey/<trainNo>/<YYYY-MM-DD>.")
+                return
+
+            train_no = match.group(1)
+            journey_date = match.group(2)
+            print(f"[Supabase] Fetching journey for train {train_no} on {journey_date}")
+
+            # Fetch all station rows for this train+date, ordered by id (= insertion/route order)
+            resp = requests.get(
+                f"{SUPABASE_URL}/rest/v1/rail_data",
+                headers={
+                    **supabase_headers(),
+                    "Accept": "application/json",
+                    "Range-Unit": "items",
+                    "Prefer": "count=none",
+                },
+                params={
+                    "train_no": f"eq.{train_no}",
+                    "journey_date": f"eq.{journey_date}",
+                    "select": (
+                        "station_code,scheduled_arrival,scheduled_departure,"
+                        "actual_arrival,actual_departure,"
+                        "delay_arrival_minutes,delay_departure_minutes"
+                    ),
+                    "order": "id.asc",
+                },
+                timeout=15,
+            )
+            resp.raise_for_status()
+            rows = resp.json()
+
+            if not rows:
+                self.send_error_response(404, f"No rail_data found for train {train_no} on {journey_date}.")
+                return
+
+            # Map DB column names → frontend schema
+            formatted_journey = [
+                {
+                    "stationCode": row["station_code"],
+                    "scheduledArrival": row["scheduled_arrival"],
+                    "scheduledDeparture": row["scheduled_departure"],
+                    "actualArrival": row["actual_arrival"],
+                    "actualDeparture": row["actual_departure"],
+                    "delayArrival": row["delay_arrival_minutes"],
+                    "delayDeparture": row["delay_departure_minutes"],
+                }
+                for row in rows
+            ]
+
+            payload = {
+                "status": "success",
+                "date": journey_date,
+                "journey": formatted_journey,
+            }
+
+            print(f"[Supabase] Journey {train_no}/{journey_date}: {len(formatted_journey)} stations returned")
+            self.send_json_response(payload)
+
+        except requests.HTTPError as e:
+            print(f"[Supabase] HTTP error fetching journey: {e}")
+            self.send_error_response(502, f"Supabase API error: {e}")
+        except Exception as e:
+            print(f"[Supabase] Error in handle_supabase_journey: {e}")
+            self.send_error_response(500, str(e))
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # RailRadar live proxy
+    # ──────────────────────────────────────────────────────────────────────────
     def handle_live_api(self):
         try:
-            # Parse query parameters to support dynamic dates (e.g. ?journeyDate=2026-05-26)
             parsed_url = urlparse(self.path)
             query_params = parse_qs(parsed_url.query)
-            
-            # 1. Retrieve journey date from query param, or fall back to today in IST (GMT+5:30)
+
             journey_date = query_params.get("journeyDate", [None])[0]
             train_no = query_params.get("trainNo", ["18238"])[0]
-            
+
             if not journey_date:
                 ist_tz = timezone(timedelta(hours=5, minutes=30))
                 journey_date = datetime.now(ist_tz).strftime("%Y-%m-%d")
-            
-            # 2. Get API key from environment, fallback to active key
-            api_key = os.environ.get("RAILRADAR_API_KEY_ONE_DAY")
-            
-            # 3. Create scraper session to bypass Cloudflare
+
+            api_key = os.environ.get("RAILRADAR_API_KEY_ONE_DAY") or "rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i"
+
             scraper = cloudscraper.create_scraper(
                 browser={
                     'browser': 'chrome',
@@ -46,7 +212,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
                     'mobile': False
                 }
             )
-            
+
             headers = {
                 "X-API-Key": api_key,
                 "Accept": "application/json, text/plain, */*",
@@ -55,7 +221,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 "Origin": "https://railradar.in",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
-            
+
             url = f"https://api.railradar.in/api/v1/trains/{train_no}"
             params = {
                 "journeyDate": journey_date,
@@ -63,26 +229,25 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 "dataProvider": "railradar",
                 "userId": ""
             }
-            
+
             print(f"[Server Proxy] Fetching live data for train {train_no} on date: {journey_date}")
             response = scraper.get(url, headers=headers, params=params, timeout=20)
-            
+
             if response.status_code != 200:
                 print(f"[Server Proxy] External API returned status: {response.status_code}")
                 self.send_error_response(response.status_code, f"External API returned status {response.status_code}.")
                 return
-                
+
             res_data = response.json()
             api_data = res_data.get("data")
-            
+
             if not api_data:
                 self.send_error_response(404, "No live tracking data active today. Train might not have started yet.")
                 return
-                
-            # Support nested or flat API responses
+
             route = []
             extracted_date = journey_date
-            
+
             if "currentLocation" in api_data and "route" in api_data:
                 route = api_data.get("route", [])
                 extracted_date = api_data.get("journeyDate") or journey_date
@@ -90,12 +255,11 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 live_data = api_data.get("liveData", {}) or {}
                 route = live_data.get("route", [])
                 extracted_date = live_data.get("journeyDate") or journey_date
-                
+
             if not route:
                 self.send_error_response(404, "Live tracking active but route station list is empty.")
                 return
-                
-            # Format route to match frontend schema
+
             formatted_journey = []
             for station in route:
                 formatted_journey.append({
@@ -107,40 +271,33 @@ class CustomHandler(SimpleHTTPRequestHandler):
                     "delayArrival": station.get("delayArrivalMinutes"),
                     "delayDeparture": station.get("delayDepartureMinutes")
                 })
-                
-            # Send clean proxy response
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-API-Key')
-            self.send_header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-            self.end_headers()
-            
+
             payload = {
                 "status": "success",
                 "date": extracted_date,
                 "journey": formatted_journey
             }
-            self.wfile.write(json.dumps(payload).encode('utf-8'))
+            self.send_json_response(payload)
             print(f"[Server Proxy] Successfully proxied {len(formatted_journey)} station route markers.")
-            
+
         except Exception as e:
             print(f"[Server Proxy] Error processing live proxy request: {e}")
             self.send_error_response(500, str(e))
 
-    def send_error_response(self, status_code, message):
+    # ──────────────────────────────────────────────────────────────────────────
+    # Helpers
+    # ──────────────────────────────────────────────────────────────────────────
+    def send_json_response(self, payload, status_code=200):
         self.send_response(status_code)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-API-Key')
         self.send_header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
         self.end_headers()
-        
-        payload = {
-            "status": "error",
-            "message": message
-        }
         self.wfile.write(json.dumps(payload).encode('utf-8'))
+
+    def send_error_response(self, status_code, message):
+        self.send_json_response({"status": "error", "message": message}, status_code=status_code)
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -149,7 +306,10 @@ class CustomHandler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
         self.end_headers()
 
+
 def run():
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        print("[Server Proxy] WARNING: SUPABASE_URL or SUPABASE_KEY not set. Supabase endpoints will fail.")
     print(f"[Server Proxy] Starting HTTP server in {DIRECTORY} on port {PORT}...")
     server_address = ('', PORT)
     httpd = HTTPServer(server_address, CustomHandler)
@@ -158,6 +318,7 @@ def run():
     except KeyboardInterrupt:
         print("\n[Server Proxy] Shutting down HTTP server.")
         httpd.server_close()
+
 
 if __name__ == '__main__':
     run()
