@@ -29,6 +29,21 @@ export function initHeader(trainData) {
     minDate: "2026-01-17",
     defaultDate: journeyDates.length > 0 ? journeyDates[journeyDates.length - 1] : null,
     disableMobile: true, // Uses our custom CSS instead of native mobile pickers
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      if (!dayElem.dateObj) return;
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const diffTime = today.getTime() - dayElem.dateObj.getTime();
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays >= -1 && diffDays <= 4) {
+        // Only add pulse if this date is actually enabled (has journeys)
+        if (!dayElem.classList.contains('flatpickr-disabled')) {
+           dayElem.innerHTML += '<span class="live-pulse calendar-live-dot"></span>';
+        }
+      }
+    }
   });
 
   // Default to the most recent date (dropdown auto-populated from DB dates)

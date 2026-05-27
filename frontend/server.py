@@ -130,6 +130,17 @@ class CustomHandler(SimpleHTTPRequestHandler):
             journey_date = match.group(2)
             print(f"[Supabase] Fetching journey for train {train_no} on {journey_date}")
 
+            ist_tz = timezone(timedelta(hours=5, minutes=30))
+            today_date_obj = datetime.now(ist_tz).date()
+            requested_date_obj = datetime.strptime(journey_date, "%Y-%m-%d").date()
+
+            # If date is within the last 4 days (or future), fetch from RailRadar directly
+            if (today_date_obj - requested_date_obj).days <= 4:
+                print(f"[Server Proxy] {journey_date} is within 4 days. Forwarding to Live API...")
+                self.path = f"/api/live?trainNo={train_no}&journeyDate={journey_date}"
+                self.handle_live_api()
+                return
+
             # Fetch all station rows for this train+date, ordered by id (= insertion/route order)
             resp = requests.get(
                 f"{SUPABASE_URL}/rest/v1/rail_data",
@@ -158,7 +169,6 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 self.send_error_response(404, f"No rail_data found for train {train_no} on {journey_date}.")
                 return
 
-            # Map DB column names → frontend schema
             formatted_journey = [
                 {
                     "stationCode": row["station_code"],
