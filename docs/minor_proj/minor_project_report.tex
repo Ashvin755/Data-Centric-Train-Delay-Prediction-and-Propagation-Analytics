@@ -491,6 +491,30 @@ Polynomial Regression & 12.322 & 19.082 & $3.247892\times10^6$ \\
 \subsection{Time-Series Trials}
 ARIMA/SARIMA/Prophet and Chronos baselines were explored, but initial outcomes were not adequate for the desired route-pattern capture. The current phase treats these as reference baselines, not final predictive claims.
 
+\section{Comparison with Prior Work}
+Direct numeric comparison with earlier studies is limited because each study targets a different quantity; Table~\ref{tab:prior_comparison} therefore states each target explicitly alongside the values as reported.
+
+\begin{table}[H]
+\centering
+\caption{Comparison with prior work (values as reported in each study)}
+\label{tab:prior_comparison}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{0.30\textwidth}p{0.24\textwidth}p{0.36\textwidth}}
+\toprule
+Study (target) & Metric & Reported result \\
+\midrule
+Gaurav \& Srivastava \cite{gaurav2018zeroshot} --- arrival late-minutes per journey, 135 trains & 95\% CI coverage; per-journey RMSE & Coverage 62.5\% (known) / 15.0\% (zero-shot); RMSE 11.8--96.6 min \\
+Arshad \& Ahmed \cite{arshad2019prediction} --- proposed MR/NN/RF protocol for Indian delays & Accuracy; training time & No numeric results reported \\
+RSTGCN \cite{chowdhury2025rstgcn} --- station-hourly average arrival delay, whole network & MAE (h); MAPE (\%); RMSE (h) & MAE 0.075 h ($\approx$4.5 min); MAPE 9.2\%; RMSE $\approx$22.8 min \\
+\midrule
+Our random forest baseline (Table~\ref{tab:model_metrics}) --- next-station departure delay & MAE; RMSE (min) & 11.592; 18.534 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Gaurav and Srivastava predict arrival late-minutes along journeys passing through Mughalsarai and report per-journey RMSE between 11.8 and 96.6 minutes, with 95\% interval coverage falling from about 62.5\% on known trains to about 15.0\% under zero-shot conditions \cite{gaurav2018zeroshot}; our random forest baseline attains an RMSE of 18.534 minutes for next-station departure delay, which falls inside that range but is measured per station step rather than per journey, so the two figures are not directly rankable. Arshad and Ahmed outline a comparison of multivariate regression, neural network, and random forest methods by accuracy and training time, but the paper reports no numeric results of its own \cite{arshad2019prediction}. RSTGCN forecasts station-level hourly average arrival delay across the entire Indian railway network and reports an MAE of 0.075 hours (about 4.5 minutes) and a MAPE of 9.2\% \cite{chowdhury2025rstgcn}; that study handles zero actual delay explicitly when computing percentage error, which is consistent with the observation following Table~\ref{tab:model_metrics} that MAPE is unusable near zero-delay denominators. Earlier studies on delay distributions and delay propagation \cite{oneto2018train,flier2009delay,goverde2010railway} address complementary questions rather than point-forecast accuracy and are therefore compared only qualitatively. Overall, our baselines remain weaker than the strongest figures reported elsewhere, which reinforces the conclusion that richer route-aware features, normalized preprocessing, and sequence models are needed in the next phase.
+
 \section{Limitations in Current Experimental Phase}
 \begin{itemize}
     \item Selection bias can occur when severely delayed journeys cross abandonment thresholds.
