@@ -25,21 +25,18 @@
 \author{%
 \IEEEauthorblockN{Arjun Sarje}
 \IEEEauthorblockA{Department of Artificial Intelligence\\
-and Data Science\\
 Samrat Ashok Technological Institute\\
 Vidisha, Madhya Pradesh, India\\
 arjun.sarje8055@gmail.com}
 \and
 \IEEEauthorblockN{Ashvin Sukaye}
 \IEEEauthorblockA{Department of Artificial Intelligence\\
-and Data Science\\
 Samrat Ashok Technological Institute\\
 Vidisha, Madhya Pradesh, India\\
-ashvin@example.com}
+ashvinsukaye@gmail.com}
 \and
 \IEEEauthorblockN{Vyomesh Khare}
 \IEEEauthorblockA{Department of Artificial Intelligence\\
-and Data Science\\
 Samrat Ashok Technological Institute\\
 Vidisha, Madhya Pradesh, India\\
 vyomeshkhare@gmail.com}
@@ -59,11 +56,11 @@ vyomeshkhare@gmail.com}
 \makeatother
 
 \begin{abstract}
-Indian Railways delay analytics faces a critical data bottleneck: there is no widely available, open, station-level, machine-learning-ready dataset suitable for longitudinal modeling of delay propagation. This paper addresses that gap through a data-centric approach that prioritizes robust data engineering before advanced prediction. We designed and deployed an automated collection pipeline using GitHub Actions cron workflows, RailRadar application programming interface (API) polling, and Supabase PostgreSQL persistence. The system tracks journey lifecycle states and stores station-level scheduled and actual timestamps together with delay fields, using an idempotent, fault-aware architecture. From January to June 2026 the pipeline ran continuously for a fixed panel of ten trains, covering both single-day and multi-day services, and collected more than 61,000 unique station-level records. Exploratory analysis of the collected data showed that specific station segments persistently add delay while others persistently recover it; this behavior is quantified with a station-pair delay-delta indicator, \emph{alpha}, which classifies adjacent halt pairs into delay-adding, neutral, and delay-recovery zones. Baseline next-station delay prediction using random forest and polynomial regression provides an initial benchmark, although current performance is not yet sufficient to capture all route-level patterns. The outcome of this phase is both a usable dataset-generation infrastructure and an analysis framework that can support future delay-prediction research specific to Indian Railways.
+Indian Railways delay analytics faces a critical data bottleneck: there is no widely available, open, station-level, machine-learning-ready dataset suitable for longitudinal modeling of delay propagation. This paper addresses that gap through a data-centric approach that prioritizes robust data engineering before advanced prediction. We designed and deployed an automated collection pipeline using GitHub Actions cron workflows, RailRadar application programming interface (API) polling, and Supabase PostgreSQL persistence. The system tracks journey lifecycle states and stores station-level scheduled and actual timestamps together with delay fields, using an idempotent, fault-aware architecture. From January to June 2026 the pipeline ran continuously for a fixed panel of ten trains, covering both single-day and multi-day services, and collected more than 61,000 unique station-level records. Exploratory analysis of the collected data showed that specific station segments persistently add delay while others persistently recover it; this behavior is quantified with a station-pair delay-delta indicator, \emph{alpha}, which classifies adjacent halt pairs into delay-adding, neutral, and delay-recovery zones. Baseline next-station delay prediction reaches 4.78 minutes mean absolute error with the best sequence model on held-out journeys, although current performance is not yet sufficient to capture all route-level patterns. The outcome of this phase is both a usable dataset-generation infrastructure and an analysis framework supporting delay-propagation modeling, ETA forecasting, and timetable-robustness analysis for Indian Railways.
 \end{abstract}
 
 \begin{IEEEkeywords}
-train delay prediction, data-centric pipeline, Indian Railways, station-pair delay delta, exploratory data analysis, baseline modeling
+train delay prediction, data-centric pipeline, Indian Railways, station-pair delay delta, exploratory data analysis, baseline modeling, journey lifecycle tracking, serverless data collection
 \end{IEEEkeywords}
 
 %=====================================================================
@@ -71,14 +68,14 @@ train delay prediction, data-centric pipeline, Indian Railways, station-pair del
 %=====================================================================
 
 \subsection{Background and Need}
-Indian Railways operates at a very large scale and is correspondingly sensitive to delay propagation across stations and routes. A delay introduced on one segment is frequently carried forward, amplified, or partially absorbed as the service proceeds, so station-to-station propagation behavior is central to any reliability analysis. Two services that share the same corridor may therefore end their journeys with very different delay profiles, depending on the sequence of segments they traverse and on where recovery capacity exists along the route.
+Indian Railways operates one of the largest rail networks in the world, carrying more than 8 billion passenger journeys annually over approximately 68{,}000~km of route \cite{indian_railways_stats}, and is correspondingly sensitive to delay propagation across stations and routes. A delay introduced on one segment is frequently carried forward, amplified, or partially absorbed as the service proceeds, affecting rolling-stock reuse, crew and platform scheduling, and downstream connectivity. Two services sharing the same corridor may therefore end with very different delay profiles, depending on the segments traversed and where recovery capacity exists along the route.
 
-Despite this operational scale, public station-level, real-time datasets suitable for reproducible delay analytics remain limited. Existing studies are often constrained by survey-based data, short observation windows, or inaccessible proprietary sources. This matters directly for modeling, because delay-prediction quality depends heavily on consistent, long-duration data that preserves journey context. A model trained on a short snapshot, or on inconsistently ordered station records, cannot reliably separate persistent route-level effects from one-off operational disturbances.
+Despite this operational scale, no openly accessible, continuously updated, and methodologically reproducible station-level dataset exists for delay analytics. Existing studies are often constrained to coarse aggregated reports, manual surveys prone to sampling bias, or inaccessible proprietary sources. This matters directly for modeling, because delay-prediction quality depends heavily on consistent, long-duration data that preserves journey context. A model trained on a short snapshot, or on inconsistently ordered station records, cannot reliably separate persistent route-level effects from one-off operational disturbances.
 
 This project therefore began with a data-centric goal: build a reliable automated collection pipeline first, and only then use the collected dataset for exploratory analytics and predictive modeling. Framing the problem this way also makes the resulting dataset reusable for research questions beyond the immediate forecasting objective, such as route-level diagnosis and segment benchmarking.
 
 \subsection{Project Motivation}
-During initial planning and literature review, we found that open resources for Indian Railways delay modeling are sparse compared with international systems, which motivated us to design our own data pipeline and to document its methodology and supporting evidence. The first phase of this work was presented at Technovision 2026, a paper-presentation competition on standards held at Samrat Ashok Technological Institute (SATI), Vidisha, and received the first prize in the Artificial Intelligence and Data Science (AI\&DS) domain.
+Unlike European and Japanese systems with open operational feeds, the Indian context lacks station-level, lifecycle-complete delay traces. This motivated a reproducible collection pipeline with documented methodology, enabling delay prediction, schedule-reliability analysis, and network optimization. The first phase of this work was presented at Technovision 2026 at Samrat Ashok Technological Institute (SATI), Vidisha, and received the first prize in the Artificial Intelligence and Data Science (AI\&DS) domain.
 
 \subsection{Objectives}
 The key objectives of this work are:
@@ -87,17 +84,18 @@ The key objectives of this work are:
     \item to maintain journey lifecycle tracking so that completion and failure context is preserved;
     \item to perform train-wise exploratory analysis that identifies persistent delay patterns;
     \item to quantify station-segment behavior using a robust route-level metric (alpha);
-    \item to establish baseline delay-prediction models as a reference for future improvements.
+    \item to establish baseline delay-prediction models as a reference for future improvements;
+    \item to document the collection methodology so that the dataset and results are reproducible and extensible.
 \end{enumerate}
 
 \subsection{Contributions in the Current Phase}
 The main contributions of this phase are:
 \begin{itemize}
-    \item a continuous collection pipeline that has been operational since January 2026;
-    \item more than 61,000 unique station-level records collected from January to June 2026;
-    \item an exploratory data analysis (EDA) workflow for ten trains with halt-station-aligned delay-trend plots;
-    \item a station-pair alpha analysis that identifies delay-add and delay-recovery zones along a route;
-    \item baseline prediction experiments using random forest (RF), polynomial regression, and time-series trials including autoregressive integrated moving average (ARIMA), seasonal ARIMA (SARIMA), Prophet, and Chronos.
+    \item \textbf{Automated collection pipeline:} continuous operation since January 2026 with no manual intervention;
+    \item \textbf{Station-level dataset:} more than 61{,}000 unique records collected from January to June 2026;
+    \item \textbf{Exploratory data analysis (EDA) workflow:} train-wise, halt-station-aligned delay-trend plots for ten trains;
+    \item \textbf{Station-pair alpha analysis:} identification of delay-add and delay-recovery zones along a route;
+    \item \textbf{Modeling benchmarks:} random forest, polynomial regression, time-series trials (ARIMA, SARIMA, Prophet, Chronos), tuned gradient boosting (XGBoost), and sequence models (LSTM, TCN).
 \end{itemize}
 
 \subsection{Organization of the Paper}
@@ -428,8 +426,9 @@ A direct numeric ranking against the literature is not meaningful because the cl
 \centering
 \caption{Comparison with Prior Work (values as reported in each study; our results from Table~\ref{tab:model_metrics})}
 \label{tab:prior_comparison}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.9}
 \begin{tabular}{@{}p{2.2cm}p{2.4cm}p{3.3cm}p{2.3cm}p{3.6cm}p{2.7cm}@{}}
 \toprule
 Study & Scope & Task / Target & Metric & Reported Result & Our Result \\
@@ -538,6 +537,13 @@ G. Woo, C. Liu, A. Sahoo, A. Kumar, and B. Hooi, ``Chronos: Learning the languag
 %=====================================================================
 \appendices
 
+% Appendix-only spacing tightening (formatting only; wording untouched).
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\dblfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{4pt}
+
 \section{Route-Ordered Alpha Profile for Train 18238}
 \label{app:alpha}
 
@@ -645,6 +651,7 @@ Seq & Pair & $n$ & Cov. & Med. $\alpha$ & Mean $\alpha$ \\
 \end{minipage}
 \end{table*}
 
+\vspace{-6pt}
 \section{Mean-Alpha Ranking Tables}
 \label{app:mean}
 
@@ -657,8 +664,8 @@ The two panels also illustrate where the mean and median diverge, which is diagn
 \caption{Top-10 Rankings by Mean Alpha (Train 18238): Delay-Adding (left) and Cover-Up (right)}
 \label{tab:mean_add}
 \scriptsize
-\setlength{\tabcolsep}{6pt}
-\renewcommand{\arraystretch}{0.95}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{0.9}
 \begin{minipage}[t]{0.485\textwidth}
 \centering
 \begin{tabular}{@{}lccccc@{}}
@@ -699,6 +706,7 @@ BEAS $\to$ JUC & 30 & 1.000 & $-6.000$ & $-5.267$ & 9.750 \\
 \end{minipage}
 \end{table*}
 
+\vspace{-6pt}
 \section{Low-Coverage and Unobserved Route Positions}
 \label{app:lowcov}
 
