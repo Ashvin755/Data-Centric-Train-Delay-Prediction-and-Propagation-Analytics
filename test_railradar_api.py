@@ -26,16 +26,15 @@ print()
 print("TEST 1: Original request (python-requests User-Agent)")
 print("-" * 70)
 
-url = f"https://api.railradar.in/api/v1/trains/{TRAIN_NO}"
+url = f"https://api.railradar.in/v1/trains/{TRAIN_NO}/live"
 headers = {
+    "Authorization": f"Bearer {API_KEY}",
     "X-API-Key": API_KEY,
     "Accept": "*/*"
 }
 params = {
-    "journeyDate": JOURNEY_DATE,
-    "dataType": "live",
-    "dataProvider": "railradar",
-    "userId": ""
+    "date": JOURNEY_DATE,
+    "haltsOnly": "true",
 }
 
 try:
@@ -68,6 +67,7 @@ print("TEST 2: With browser User-Agent")
 print("-" * 70)
 
 headers_browser = {
+    "Authorization": f"Bearer {API_KEY}",
     "X-API-Key": API_KEY,
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json, text/plain, */*",

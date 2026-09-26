@@ -213,7 +213,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 ist_tz = timezone(timedelta(hours=5, minutes=30))
                 journey_date = datetime.now(ist_tz).strftime("%Y-%m-%d")
 
-            api_key = os.environ.get("RAILRADAR_API_KEY_ONE_DAY") or "rr_lx1i9s8amh6n5fg86wb92gpvo3vjmv9i"
+            api_key = os.environ.get("RAILRADAR_API_KEY_ONE_DAY")
 
             scraper = cloudscraper.create_scraper(
                 browser={
@@ -224,6 +224,7 @@ class CustomHandler(SimpleHTTPRequestHandler):
             )
 
             headers = {
+                "Authorization": f"Bearer {api_key}",
                 "X-API-Key": api_key,
                 "Accept": "application/json, text/plain, */*",
                 "Accept-Language": "en-US,en;q=0.9",
@@ -232,12 +233,10 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
 
-            url = f"https://api.railradar.in/api/v1/trains/{train_no}"
+            url = f"https://api.railradar.in/v1/trains/{train_no}/live"
             params = {
-                "journeyDate": journey_date,
-                "dataType": "live",
-                "dataProvider": "railradar",
-                "userId": ""
+                "date": journey_date,
+                "haltsOnly": "true",
             }
 
             print(f"[Server Proxy] Fetching live data for train {train_no} on date: {journey_date}")
@@ -258,28 +257,72 @@ class CustomHandler(SimpleHTTPRequestHandler):
             route = []
             extracted_date = journey_date
 
-            if "currentLocation" in api_data and "route" in api_data:
-                route = api_data.get("route", [])
-                extracted_date = api_data.get("journeyDate") or journey_date
-            elif "liveData" in api_data:
-                live_data = api_data.get("liveData", {}) or {}
-                route = live_data.get("route", [])
-                extracted_date = live_data.get("journeyDate") or journey_date
+            if isinstance(api_data, dict):
+                if "route" in api_data:
+                    # Current shape: {startDate, status, currentLocation, route}
+                    route = api_data.get("route", []) or []
+                    extracted_date = api_data.get("startDate") or api_data.get("journeyDate") or journey_date
+                elif "liveData" in api_data:
+                    live_data = api_data.get("liveData", {}) or {}
+                    route = live_data.get("route", [])
+                    extracted_date = live_data.get("journeyDate") or journey_date
 
             if not route:
                 self.send_error_response(404, "Live tracking active but route station list is empty.")
                 return
 
+            def _to_unix(value):
+                # Frontend time helpers expect unix seconds; the new API
+                # returns ISO-8601 strings, legacy payloads used unix ints.
+                # Naive datetimes (no offset) are IST wall-times.
+                if value is None or value == "":
+                    return None
+                if isinstance(value, bool):
+                    return None
+                if isinstance(value, (int, float)):
+                    return int(value)
+                if isinstance(value, str):
+                    text = value.strip()
+                    if not text:
+                        return None
+                    if text.lstrip("+-").isdigit():
+                        return int(text)
+                    try:
+                        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+                        if parsed.tzinfo is None:
+                            parsed = parsed.replace(tzinfo=timezone(timedelta(hours=5, minutes=30)))
+                        return int(parsed.timestamp())
+                    except ValueError:
+                        return None
+                return None
+
+            def _to_int(value):
+                if value is None or value == "":
+                    return None
+                if isinstance(value, bool):
+                    return None
+                try:
+                    return int(value)
+                except (TypeError, ValueError):
+                    try:
+                        return int(float(value))
+                    except (TypeError, ValueError):
+                        return None
+
             formatted_journey = []
             for station in route:
+                if not isinstance(station, dict):
+                    continue
                 formatted_journey.append({
                     "stationCode": station.get("stationCode"),
-                    "scheduledArrival": station.get("scheduledArrival"),
-                    "scheduledDeparture": station.get("scheduledDeparture"),
-                    "actualArrival": station.get("actualArrival"),
-                    "actualDeparture": station.get("actualDeparture"),
-                    "delayArrival": station.get("delayArrivalMinutes"),
-                    "delayDeparture": station.get("delayDepartureMinutes")
+                    "scheduledArrival": _to_unix(station.get("scheduledArrival")),
+                    "scheduledDeparture": _to_unix(station.get("scheduledDeparture")),
+                    "actualArrival": _to_unix(station.get("actualArrival")),
+                    "actualDeparture": _to_unix(station.get("actualDeparture")),
+                    # New API uses delayArrival/delayDeparture (minutes);
+                    # legacy shape used delayArrivalMinutes/delayDepartureMinutes.
+                    "delayArrival": _to_int(station.get("delayArrivalMinutes", station.get("delayArrival"))),
+                    "delayDeparture": _to_int(station.get("delayDepartureMinutes", station.get("delayDeparture")))
                 })
 
             payload = {

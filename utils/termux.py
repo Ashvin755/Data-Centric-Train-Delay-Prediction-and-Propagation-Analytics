@@ -1,23 +1,22 @@
 import requests
 from typing import Dict, Any
 
-BASE_URL = "https://api.railradar.in/api"
+BASE_URL = "https://api.railradar.in"
 ENDPOINT = "/v1/trains"
 
 
-def get_train_info(api_key: str, train_number: str, journey_date: str = None, data_type: str = "full") -> Dict[str, Any]:
-    url = f"{BASE_URL}{ENDPOINT}/{train_number}"
+def get_train_info(api_key: str, train_number: str, journey_date: str = None, data_type: str = "live") -> Dict[str, Any]:
+    url = f"{BASE_URL}{ENDPOINT}/{train_number}/live"
     headers = {
+        "Authorization": f"Bearer {api_key}",
         "X-API-Key": api_key,
         "User-Agent": "RailRadar-Python-Client/1.0"
     }
     
-    # Build query parameters
-    params = {}
+    # Build query parameters (current live endpoint)
+    params = {"haltsOnly": "true"}
     if journey_date:
-        params["journeyDate"] = journey_date
-    if data_type:
-        params["dataType"] = data_type
+        params["date"] = journey_date
 
     try:
         response = requests.get(url, headers=headers, params=params, timeout=10)

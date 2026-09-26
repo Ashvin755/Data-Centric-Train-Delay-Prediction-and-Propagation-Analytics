@@ -32,6 +32,7 @@ def load_api_key() -> str:
 
 def build_headers(api_key: str) -> dict:
     return {
+        "Authorization": f"Bearer {api_key}",
         "X-API-Key": api_key,
         "Accept": "application/json, text/plain, */*",
         "Accept-Language": "en-US,en;q=0.9",
@@ -46,12 +47,10 @@ def build_headers(api_key: str) -> dict:
 
 
 def fetch_live_payload(train_number: str, journey_date: str, api_key: str) -> dict:
-    url = f"https://api.railradar.in/api/v1/trains/{train_number}"
+    url = f"https://api.railradar.in/v1/trains/{train_number}/live"
     params = {
-        "journeyDate": journey_date,
-        "dataType": "live",
-        "dataProvider": "railradar",
-        "userId": "",
+        "date": journey_date,
+        "haltsOnly": "true",
     }
 
     response = requests.get(url, headers=build_headers(api_key), params=params, timeout=20)

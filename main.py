@@ -37,7 +37,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 # Separate API keys for different endpoint types
 RAILRADAR_API_KEY_ONE_DAY = os.getenv("RAILRADAR_API_KEY_ONE_DAY") or os.getenv("RAILRADAR_API_KEY")
 RAILRADAR_API_KEY_MULTI_DAY = os.getenv("RAILRADAR_API_KEY_MULTI_DAY") or os.getenv("RAILRADAR_API_KEY")
-MAX_FLAG_THRESHOLD = int(os.getenv("MAX_FLAG_THRESHOLD", "6"))
+MAX_FLAG_THRESHOLD = int(os.getenv("MAX_FLAG_THRESHOLD") or "6")
 TIMEZONE = os.getenv("TIMEZONE", "Asia/Kolkata")
 SERVICE_NAME = os.getenv("RENDER_SERVICE_NAME", "rail-data-collector")
 
