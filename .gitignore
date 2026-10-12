@@ -38,3 +38,18 @@ docs/sati_conference/main.aux
 docs/sati_conference/main.log
 docs/sati_conference/main.synctex.gz
 docs/sati_conference/main.synctex(busy)
+
+# pdflatex files - JRTPM (Elsevier) manuscript
+docs/sati_conference/elsevier/main.abs
+docs/sati_conference/elsevier/main.aux
+docs/sati_conference/elsevier/main.bbl
+docs/sati_conference/elsevier/main.blg
+docs/sati_conference/elsevier/main.log
+docs/sati_conference/elsevier/main.out
+docs/sati_conference/elsevier/main.synctex.gz
+docs/sati_conference/elsevier/main.synctex(busy)
+docs/sati_conference/elsevier/main.toc
+
+# Figure-regeneration cache (regen_figures.py prepared-frame pickle)
+docs/sati_conference/elsevier/.cache/
+

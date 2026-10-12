@@ -1,0 +1,46 @@
+graph TB
+    subgraph GitHub["GitHub Actions"]
+        CRON1[Cron Schedule<br/>Every 5 hours]
+        CRON2[Cron Schedule<br/>Every 12 hours]
+        WF1[one-day-poll.yml<br/>Workflow]
+        WF2[multi-day-poll.yml<br/>Workflow]
+        SCRIPT1[run_one_day_poll.py<br/>Python Script]
+        SCRIPT2[run_multi_day_poll.py<br/>Python Script]
+    end
+    
+    subgraph RailRadar["RailRadar API"]
+        RR1[API Key 1<br/>One-Day Trains]
+        RR2[API Key 2<br/>Multi-Day Trains]
+    end
+    
+    subgraph Supabase["Supabase PostgreSQL"]
+        TI[(train_info<br/>Static Metadata)]
+        JSF[(journey_status_flags<br/>State Management)]
+        RD[(rail_data<br/>Final Dataset)]
+    end
+    
+    CRON1 -->|Trigger| WF1
+    CRON2 -->|Trigger| WF2
+    WF1 -->|Execute| SCRIPT1
+    WF2 -->|Execute| SCRIPT2
+    
+    SCRIPT1 -->|API Key 1| RR1
+    SCRIPT2 -->|API Key 2| RR2
+    
+    SCRIPT1 --> TI
+    SCRIPT1 --> JSF
+    SCRIPT1 --> RD
+    
+    SCRIPT2 --> TI
+    SCRIPT2 --> JSF
+    SCRIPT2 --> RD
+    
+    style CRON1 fill:#f9f,stroke:#333,stroke-width:2px
+    style CRON2 fill:#f9f,stroke:#333,stroke-width:2px
+    style WF1 fill:#bbf,stroke:#333,stroke-width:2px
+    style WF2 fill:#bbf,stroke:#333,stroke-width:2px
+    style SCRIPT1 fill:#e1f5ff,stroke:#333,stroke-width:2px
+    style SCRIPT2 fill:#e1f5ff,stroke:#333,stroke-width:2px
+    style TI fill:#bfb,stroke:#333,stroke-width:2px
+    style JSF fill:#bfb,stroke:#333,stroke-width:2px
+    style RD fill:#bfb,stroke:#333,stroke-width:2px

@@ -1,0 +1,4 @@
+• Automated pipeline collected over 61,000 station-level delay records
+• Station-pair alpha separates delay-adding from delay-recovery segments
+• Best next-station model: MAE 4.78 min, RMSE 8.1 min on held-out journeys
+• Reproducible open data-generation pipeline for Indian Railways
