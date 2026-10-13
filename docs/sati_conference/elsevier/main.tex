@@ -50,17 +50,18 @@ and June 2026 the pipeline ran continuously for a fixed panel of ten trains
 covering single-day and multi-day services, yielding more than 61{,}000
 unique station-level records. Exploratory analysis shows that delay behaviour
 is strongly segment-dependent: some adjacent halt pairs persistently add delay
-while others persistently absorb it. This is quantified by a station-pair
-delay-delta indicator, $\alpha$, which classifies route segments into
-delay-adding, neutral, and recovery zones and is reported together with an
-observation-coverage ratio. Baseline next-station delay prediction on
-held-out journeys reaches a mean absolute error of 4.78\,min with a temporal
-convolutional network, 43\,\% below a naive persistence baseline, while
-simpler statistical and tree baselines fail to improve on persistence.
-Percentage-based error is shown to be unusable for this target because of
-near-zero delay denominators. The outcome of this phase is a documented
-dataset-generation infrastructure and an interpretable segment-level
-diagnostic framework for delay propagation, with forecasting accuracy
+while others persistently absorb it, suggesting candidate operational differences
+such as congested locations versus segments with recovery margin. This is quantified
+by a station-pair delay-delta indicator, $\alpha$, which classifies route
+segments into delay-adding, neutral, and recovery zones and is reported
+together with an observation-coverage ratio. Baseline next-station delay
+prediction on held-out journeys reaches a mean absolute error of 4.78\,min
+with a temporal convolutional network, 43\,\% below a naive persistence
+baseline, while simpler statistical and tree baselines fail to improve on
+persistence. Percentage-based error is shown to be unusable for this target
+because of near-zero delay denominators. The outcome of this phase is a
+documented dataset-generation infrastructure, an interpretable segment-level
+diagnostic for where delay arises operationally, and benchmarked forecasts 
 addressed in subsequent work.
 \end{abstract}
 
@@ -103,19 +104,31 @@ one-off operational disturbances.
 
 This project therefore began with a data-centric goal: build a reliable
 automated collection pipeline first, and only then use the collected dataset
-for exploratory analytics and predictive modeling. Framing the problem this
-way also makes the resulting dataset reusable for research questions beyond
-the immediate forecasting objective, such as route-level diagnosis and
-segment benchmarking.
+for exploratory analytics and predictive modeling. The goal covers both
+operational diagnosis (where delay accumulates and where it is recovered) and
+forecasting (how much delay carries forward to the next station). Framing the
+problem this way also makes the resulting dataset reusable for research
+questions beyond the immediate forecasting objective, such as route-level
+diagnosis and segment benchmarking.
 
 \subsection{Project motivation}
 Unlike European and Japanese systems with open operational feeds, the Indian
 context lacks station-level, lifecycle-complete delay traces. This motivated
-a reproducible collection pipeline with documented methodology, enabling delay
-prediction, schedule-reliability analysis, and network optimization. The first
-phase of this work was presented at Technovision 2026 at Samrat Ashok
-Technological Institute (SATI), Vidisha, and received the first prize in the
-Artificial Intelligence and Data Science (AI\&DS) domain.
+a reproducible collection pipeline with documented methodology to answer two
+complementary questions. First, an operational question: why trains get late
+at specific locations, for example where station congestion, platform
+occupancy, or limited running-time margin causes delay to accumulate, and
+where timetable slack allows it to be recovered. Second, a predictive
+question: how much of the observed delay will carry forward to the next
+station. The station-pair analysis in this paper addresses the first question
+by locating persistent delay-adding and recovery zones, treated as candidate
+operational effects to be confirmed with concurrent multi-train station data
+rather than proven root causes (future work), while the baseline models
+address the second question by benchmarking
+next-station forecasts. The first phase of this work was presented at
+Technovision 2026 at Samrat Ashok Technological Institute (SATI), Vidisha,
+and received the first prize in the Artificial Intelligence and Data Science
+(AI\&DS) domain.
 
 \subsection{Objectives}
 The key objectives of this work are:
@@ -124,10 +137,11 @@ The key objectives of this work are:
           collects station-level delay data for selected trains;
     \item to maintain journey lifecycle tracking so that completion and
           failure context is preserved;
-    \item to perform train-wise exploratory analysis that identifies
-          persistent delay patterns;
+    \item to perform train-wise exploratory analysis that locates where
+          delay systematically grows or shrinks along a route;
     \item to quantify station-segment behavior using a robust route-level
-          metric ($\alpha$);
+          metric ($\alpha$) as an operational diagnostic for candidate
+          delay-adding and recovery zones;
     \item to establish baseline delay-prediction models as a reference for
           future improvements;
     \item to document the collection methodology so that the dataset and
@@ -171,9 +185,9 @@ forecasting and traffic optimization
 \citep{oneto2018train,flier2009delay,goverde2010railway}. These datasets
 typically include structured temporal events and multi-year coverage, which
 makes replication and comparison of published results feasible and allows
-models to be evaluated under controlled conditions. Rescheduling and
-passenger-dissatisfaction objectives have also been formulated for Indian
-services \citep{tomii2005train}, although reported results are limited to
+models to be evaluated under controlled conditions. Rescheduling objectives with
+passenger-dissatisfaction criteria have also been formulated, for example for
+Japanese services \citep{tomii2005train}, although reported results are limited to
 simulation studies rather than operationally collected traces.
 
 \subsection{Indian context and data-availability gap}
@@ -241,6 +255,10 @@ Several concrete challenges motivate this formulation:
           without a stable station ordering;
     \item baseline models struggle without route-aware feature design and
           normalized preprocessing;
+    \item operational causes of lateness, such as congestion at specific
+          stations or segments, cannot be fully attributed from single-train
+          traces alone; concurrent multi-train station data are needed to
+          confirm congestion effects;
     \item existing public-facing estimated-time-of-arrival systems are often
           perceived as heavily timetable- or heuristic-driven, which
           motivates a stronger data-driven alternative for delay-aware
@@ -828,7 +846,11 @@ The present results are subject to the following limitations:
           richer factors such as weather feeds, infrastructure constraints,
           or control actions;
     \item baseline models do not yet fully encode station-network structure,
-          so interactions between neighboring segments remain implicit.
+          so interactions between neighboring segments remain implicit;
+    \item congestion attribution is limited: alpha locates persistent
+          delay-adding zones from single-train traces, but confirming
+          station congestion requires concurrent multi-train observations
+          at shared stations, which is deferred to future work.
 \end{itemize}
 The first two limitations interact: if severely delayed journeys are more
 likely to be abandoned, and abandonment is more likely during disruptive
@@ -873,7 +895,9 @@ Planned next steps are:
     \item graph-based representations for delay propagation;
     \item improved objective functions and robust evaluation metrics beyond
           MAPE;
-    \item scaling train coverage and extending the collection horizon.
+    \item scaling train coverage and extending the collection horizon to
+          enable concurrent-station analysis, where all trains sharing a
+          station are observed together to confirm congestion effects.
 \end{enumerate}
 
 A particularly promising direction is graph-embedding-based station-delay
