@@ -18,6 +18,8 @@ here from `els-cas-templates/`, which is kept pristine and is not modified).
 
 ## Files to submit
 
+### remember to not open-source while uploading as it might charge the auhor money
+
 Upload exactly these. Nothing else in this folder goes to the journal.
 
 **Required**
