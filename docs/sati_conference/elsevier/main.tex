@@ -81,6 +81,10 @@ station-level delay data \sep sequence models \sep timetable reliability
 
 \section{Introduction}
 
+Train delays propagate across stations and routes, so this data-centric work
+first builds a reliable collection pipeline and then analyses and models the
+resulting station-level traces.
+
 \subsection{Background and need}
 Indian Railways operates one of the largest rail networks in the world,
 carrying more than 8 billion passenger journeys annually over approximately
@@ -176,6 +180,9 @@ current work and outlines future directions.
 \section{Related work}
 \label{sec:related}
 
+Delay modelling is well established where open operational feeds exist, but
+the Indian context lacks comparable data infrastructure.
+
 \subsection{Railway delay modeling in the international context}
 International railway systems such as those in the United Kingdom and
 Germany provide open operational feeds that support reproducible analytics
@@ -235,6 +242,9 @@ insight prior to stronger model claims.
 
 \section{Problem statement}
 \label{sec:problem}
+
+The long-term goal is delay forecasting, but the enabling bottleneck is the
+absence of open, journey-aligned station-level data.
 
 \subsection{Core problem}
 The primary long-term problem is robust train delay forecasting for Indian
@@ -296,6 +306,9 @@ journey date and polling cycle.
 
 \section{Proposed work: system architecture and methodology}
 \label{sec:proposed}
+
+Collection runs as scheduled serverless workflows with explicit journey
+lifecycle tracking.
 
 \subsection{System overview}
 The implemented system uses a serverless execution model driven by scheduled
@@ -520,6 +533,9 @@ compared across journeys with very different starting conditions.
 
 \section{Experimental results and analysis}
 \label{sec:results}
+
+Analysis uses the 1 January to 24 May 2026 export, with journey-wise splits
+for evaluation.
 
 \subsection{Dataset snapshot and preprocessing}
 The collection system ran from January to June 2026 and collected more than
@@ -862,6 +878,9 @@ estimates. Data collection was paused on 8 June 2026, so observations are not av
 \section{Conclusion and future work}
 \label{sec:conclusion}
 
+The contribution of this phase is a documented data foundation with
+diagnostics and benchmarks, rather than a final predictor.
+
 \subsection{Conclusion}
 This work established a data-centric pipeline for Indian Railways delay
 analytics and demonstrated that reliable station-level data generation is
@@ -956,7 +975,8 @@ sequence numbering running unbroken across the page break.
 coverage ratio).}
 \label{tab:route_alpha}
 \setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{0.92}
+\renewcommand{\arraystretch}{0.85}
+\footnotesize
 \begin{tabular*}{\tblwidth}{@{\extracolsep{\fill}}r l c c c c@{}}
 \toprule
 Seq & Pair & $n$ & Cov. & Med.\ $\alpha$ & Mean $\alpha$ \\
@@ -1008,7 +1028,8 @@ Seq & Pair & $n$ & Cov. & Med.\ $\alpha$ & Mean $\alpha$ \\
 \caption{Route-ordered alpha profile for Train 18238 (median and mean with
 coverage ratio), route positions 34--83.}
 \setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{0.92}
+\renewcommand{\arraystretch}{0.85}
+\footnotesize
 \begin{tabular*}{\tblwidth}{@{\extracolsep{\fill}}r l c c c c@{}}
 \toprule
 Seq & Pair & $n$ & Cov. & Med.\ $\alpha$ & Mean $\alpha$ \\
