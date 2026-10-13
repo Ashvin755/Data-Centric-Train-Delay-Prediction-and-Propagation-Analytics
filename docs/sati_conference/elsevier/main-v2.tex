@@ -39,7 +39,7 @@
 
 \begin{abstract}
 Delay analytics for Indian Railways is constrained by the absence of a
-reproducible, station-level, machine-learning-ready dataset. This paper
+reproducible, station-level, machine-learning-ready dataset. This work
 addresses that gap with a data-centric pipeline that was designed, deployed,
 and operated before any predictive modelling was attempted. Scheduled
 workflows poll a live train-tracking application programming interface and
@@ -101,7 +101,7 @@ context. A model trained on a short snapshot, or on inconsistently ordered
 station records, cannot reliably separate persistent route-level effects from
 one-off operational disturbances.
 
-This project therefore began with a data-centric goal: build a reliable
+This work therefore began with a data-centric goal: build a reliable
 automated collection pipeline first, and only then use the collected dataset
 for exploratory analytics and predictive modeling. The goal covers both
 operational diagnosis (where delay accumulates and where it is recovered) and
@@ -118,7 +118,7 @@ at specific locations, for example where station congestion, platform
 occupancy, or limited running-time margin causes delay to accumulate, and
 where timetable slack allows it to be recovered. Second, a predictive
 question: how much of the observed delay will carry forward to the next
-station. The station-pair analysis in this paper addresses the first question
+station. The station-pair analysis in this work addresses the first question
 by locating persistent delay-adding and recovery zones, treated as candidate
 operational effects to be confirmed with concurrent multi-train station data
 rather than proven root causes (future work), while the baseline models
@@ -131,8 +131,8 @@ prediction models. This phase delivers continuous collection since January
 2026 with over 61{,}000 station-level records, an interpretable
 segment-level analysis, and benchmarked forecasts.
 
-Section~\ref{sec:related} reviews related literature and identifies the
-research gap. Section~\ref{sec:problem} describes the research problem and scope.
+Section~\ref{sec:related} reviews related literature and the research gap,
+and describes the research problem and scope.
 Section~\ref{sec:proposed} describes the system architecture and methodology.
 Section~\ref{sec:results} presents dataset
 statistics, analysis results, alpha findings, baseline modeling outcomes,
@@ -165,7 +165,7 @@ online running-status sources, but without an openly shareable benchmark
 dataset accompanying the publication \citep{arshad2019prediction}. More
 recently, the RSTGCN study claimed a nationwide Indian railway delay dataset,
 but at the time of review that dataset was not publicly accessible through
-the links in the paper's repository trail, which limits independent
+the links in the study's repository trail, which limits independent
 verification and reuse \citep{chowdhury2025rstgcn}. While high-level
 operational reports do exist \citep{indian_railways_stats}, model-ready
 station-level traces with continuous open access are still uncommon.
@@ -195,9 +195,6 @@ data-first collection and analysis pipeline for the Indian context and
 introduces an interpretable station-pair alpha indicator for operational
 insight prior to stronger model claims.
 
-\section{Research problem and scope}
-\label{sec:problem}
-
 The primary long-term problem is robust train delay forecasting for Indian
 Railways, especially station-to-station delay propagation and
 arrival-time reliability improvement. In practical execution, however, we
@@ -226,7 +223,7 @@ aggregation unreliable. And without normalized preprocessing, even a
 well-specified model tends to fit dominant, high-delay segments at the expense
 of the smaller recovery effects that are operationally informative.
 
-The project therefore designs and operates an automated data pipeline that
+This work therefore designs and operates an automated data pipeline that
 collects reliable station-level delay data for selected Indian trains, and
 develops a data analysis framework that reveals persistent station-segment
 delay behavior, quantifies delay accumulation and delay-recovery zones, and
@@ -491,7 +488,7 @@ for evaluation.
 \subsection{Dataset snapshot and preprocessing}
 The collection system ran from January to June 2026 and collected more than
 61{,}000 unique station-level records. The data used for the visualizations
-and modeling in this paper spans 1 January to 24 May 2026. For analysis,
+and modeling in this work spans 1 January to 24 May 2026. For analysis,
 timestamp fields were parsed and converted to IST, and both the journey date
 and the halt-station sequence were normalized to support cross-journey
 comparison. The primary fields used in this phase are train number, journey
