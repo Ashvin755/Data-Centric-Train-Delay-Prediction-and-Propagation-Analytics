@@ -945,10 +945,13 @@ not observed in the window are absent from the table, and the low-coverage
 positions discussed in Section~\ref{sec:results} appear near route
 position~65. Because the profile is too long for a single page, it is set as
 two consecutive parts that form one continuous table: the first part carries
-route positions 1--67 and the second continues with positions 68--83, with the
+route positions 1--33 and the second continues with positions 34--83, with the
 sequence numbering running unbroken across the page break.
 
-\begin{table*}[width=\textwidth,pos=t]
+\makeatletter
+\def\@dbflt#1{\@ifnextchar[{\@xdblfloat{#1}}{\@xdblfloat{#1}[b]}}
+\makeatother
+\begin{table*}[width=\textwidth,pos=b]
 \caption{Route-ordered alpha profile for Train 18238 (median and mean with
 coverage ratio).}
 \label{tab:route_alpha}
@@ -989,41 +992,12 @@ Seq & Pair & $n$ & Cov. & Med.\ $\alpha$ & Mean $\alpha$ \\
 31 & SBB $\to$ NZM  & 30 & 1.000 &   3.000 &   4.600 \\
 32 & NZM $\to$ BVH  & 30 & 1.000 &  $-3.000$ &  $-1.633$ \\
 33 & BVH $\to$ PWL  & 30 & 1.000 &  $-8.500$ &  $-6.933$ \\
-34 & PWL $\to$ KSV  & 30 & 1.000 &   4.000 &   5.267 \\
-35 & KSV $\to$ CHJ  & 30 & 1.000 &   2.000 &   2.300 \\
-36 & CHJ $\to$ MTJ  & 30 & 1.000 &  11.500 &  14.200 \\
-37 & MTJ $\to$ RKM  & 30 & 1.000 &  36.000 &  28.733 \\
-38 & RKM $\to$ AGC  & 30 & 1.000 &   7.000 &   8.600 \\
-39 & AGC $\to$ DHO  & 30 & 1.000 & $-71.000$ & $-57.167$ \\
-40 & DHO $\to$ MRA  & 30 & 1.000 &  14.500 &  26.267 \\
-41 & MRA $\to$ GWL  & 30 & 1.000 & $-15.000$ & $-23.633$ \\
-42 & GWL $\to$ DBA  & 30 & 1.000 &   0.500 &   3.567 \\
-43 & DBA $\to$ SOR  & 30 & 1.000 &  $-1.000$ &  $-0.500$ \\
-44 & SOR $\to$ DAA  & 30 & 1.000 &   2.000 &   3.133 \\
-45 & DAA $\to$ VGLJ & 30 & 1.000 &  $-3.000$ &  $-1.700$ \\
-46 & VGLJ $\to$ BAB & 30 & 1.000 &   6.000 &   7.567 \\
-47 & BAB $\to$ BZY  & 30 & 1.000 &  $-4.000$ &  $-2.200$ \\
-48 & BZY $\to$ TBT  & 30 & 1.000 &  $-1.500$ &   0.500 \\
-49 & TBT $\to$ LAR  & 30 & 1.000 &   2.500 &   5.433 \\
-50 & LAR $\to$ DUA  & 30 & 1.000 &   9.000 &   9.367 \\
-51 & DUA $\to$ BINA & 30 & 1.000 & $-18.500$ & $-19.167$ \\
-52 & BINA $\to$ MABA & 30 & 1.000 &   5.000 &   5.733 \\
-53 & MABA $\to$ BAQ & 30 & 1.000 &   1.000 &   1.733 \\
-54 & BAQ $\to$ BHS  & 30 & 1.000 &   6.500 &   6.133 \\
-55 & BHS $\to$ BPL  & 30 & 1.000 &  $-5.000$ &  $-2.933$ \\
-56 & BPL $\to$ RKMP & 30 & 1.000 &   0.000 &   1.533 \\
-57 & RKMP $\to$ ODG & 30 & 1.000 &   8.000 &   8.567 \\
-58 & ODG $\to$ NDPM & 30 & 1.000 &  $-3.000$ &   1.667 \\
-61 & GDYA $\to$ BZU & 30 & 1.000 &   2.500 &   6.033 \\
-62 & BZU $\to$ AMLA & 30 & 1.000 &   0.000 &   1.167 \\
-63 & AMLA $\to$ MTY & 30 & 1.000 &   2.000 &   2.867 \\
-64 & MTY $\to$ PAR  & 30 & 1.000 &   7.000 &   8.567 \\
-65 & PAR $\to$ NRKR &  4 & 0.133 &   1.000 &   0.750 \\
-66 & NRKR $\to$ KATL &  4 & 0.133 &   2.500 &   2.750 \\
-67 & KATL $\to$ NGP & 30 & 1.000 & $-26.000$ & $-27.800$ \\
 \midrule
 \end{tabular*}
 \end{table*}
+\makeatletter
+\def\@dbflt#1{\@ifnextchar[{\@xdblfloat{#1}}{\@xdblfloat{#1}[tp]}}
+\makeatother
 
 \begingroup
 \makeatletter
@@ -1032,13 +1006,45 @@ Seq & Pair & $n$ & Cov. & Med.\ $\alpha$ & Mean $\alpha$ \\
 \makeatother
 \begin{table*}[width=\textwidth,pos=t]
 \caption{Route-ordered alpha profile for Train 18238 (median and mean with
-coverage ratio), route positions 68--83.}
+coverage ratio), route positions 34--83.}
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{0.92}
 \begin{tabular*}{\tblwidth}{@{\extracolsep{\fill}}r l c c c c@{}}
 \toprule
 Seq & Pair & $n$ & Cov. & Med.\ $\alpha$ & Mean $\alpha$ \\
 \midrule
+34 & PWL $\to$ KSV & 30 & 1.000 &   4.000 &   5.267 \\
+35 & KSV $\to$ CHJ & 30 & 1.000 &   2.000 &   2.300 \\
+36 & CHJ $\to$ MTJ & 30 & 1.000 &  11.500 &  14.200 \\
+37 & MTJ $\to$ RKM & 30 & 1.000 &  36.000 &  28.733 \\
+38 & RKM $\to$ AGC & 30 & 1.000 &   7.000 &   8.600 \\
+39 & AGC $\to$ DHO & 30 & 1.000 & $-71.000$ & $-57.167$ \\
+40 & DHO $\to$ MRA & 30 & 1.000 &  14.500 &  26.267 \\
+41 & MRA $\to$ GWL & 30 & 1.000 & $-15.000$ & $-23.633$ \\
+42 & GWL $\to$ DBA & 30 & 1.000 &   0.500 &   3.567 \\
+43 & DBA $\to$ SOR & 30 & 1.000 &  $-1.000$ &  $-0.500$ \\
+44 & SOR $\to$ DAA & 30 & 1.000 &   2.000 &   3.133 \\
+45 & DAA $\to$ VGLJ & 30 & 1.000 &  $-3.000$ &  $-1.700$ \\
+46 & VGLJ $\to$ BAB & 30 & 1.000 &   6.000 &   7.567 \\
+47 & BAB $\to$ BZY & 30 & 1.000 &  $-4.000$ &  $-2.200$ \\
+48 & BZY $\to$ TBT & 30 & 1.000 &  $-1.500$ &   0.500 \\
+49 & TBT $\to$ LAR & 30 & 1.000 &   2.500 &   5.433 \\
+50 & LAR $\to$ DUA & 30 & 1.000 &   9.000 &   9.367 \\
+51 & DUA $\to$ BINA & 30 & 1.000 & $-18.500$ & $-19.167$ \\
+52 & BINA $\to$ MABA & 30 & 1.000 &   5.000 &   5.733 \\
+53 & MABA $\to$ BAQ & 30 & 1.000 &   1.000 &   1.733 \\
+54 & BAQ $\to$ BHS & 30 & 1.000 &   6.500 &   6.133 \\
+55 & BHS $\to$ BPL & 30 & 1.000 &  $-5.000$ &  $-2.933$ \\
+56 & BPL $\to$ RKMP & 30 & 1.000 &   0.000 &   1.533 \\
+57 & RKMP $\to$ ODG & 30 & 1.000 &   8.000 &   8.567 \\
+58 & ODG $\to$ NDPM & 30 & 1.000 &  $-3.000$ &   1.667 \\
+61 & GDYA $\to$ BZU & 30 & 1.000 &   2.500 &   6.033 \\
+62 & BZU $\to$ AMLA & 30 & 1.000 &   0.000 &   1.167 \\
+63 & AMLA $\to$ MTY & 30 & 1.000 &   2.000 &   2.867 \\
+64 & MTY $\to$ PAR & 30 & 1.000 &   7.000 &   8.567 \\
+65 & PAR $\to$ NRKR &  4 & 0.133 &   1.000 &   0.750 \\
+66 & NRKR $\to$ KATL &  4 & 0.133 &   2.500 &   2.750 \\
+67 & KATL $\to$ NGP & 30 & 1.000 & $-26.000$ & $-27.800$ \\
 68 & NGP $\to$ KP   & 30 & 1.000 &  $-6.000$ &  $-4.867$ \\
 69 & KP $\to$ BRD   & 30 & 1.000 &  $-0.500$ &   0.367 \\
 70 & BRD $\to$ TMR  & 30 & 1.000 &  $-2.000$ &  $-1.733$ \\
