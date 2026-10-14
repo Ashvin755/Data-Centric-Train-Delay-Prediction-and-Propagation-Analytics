@@ -1,0 +1,131 @@
+# NTES Connectivity Diagnostics
+#
+# Manual-only probe for the GitHub Actions -> NTES connection failures
+# (ConnectTimeoutError / Read timed out on enquiry.indianrail.gov.in).
+#
+# This workflow makes NO writes to Supabase and calls NO polling code.
+# It only measures network reachability and dumps the evidence into the log.
+#
+# It lives on `main` only because GitHub requires the workflow file to exist on
+# the default branch for `workflow_dispatch` to fire. It checks out `ntes` only
+# to exercise the real NTESAPI client in step 6.
+#
+# Run it, then run the equivalent commands locally (see the run log) and
+# compare. Same result locally + failure on runner = NTES blocks the runner's
+# IP. Works locally + fails on runner = same conclusion, confirmed.
+name: NTES Connectivity Diagnostics
+
+on:
+  workflow_dispatch: # Manual only - never schedule this, it is a debugging aid
+
+jobs:
+  diagnose:
+    # Default branch does not matter for network egress; ubuntu-22.04 matches
+    # the poller runners so the comparison is apples-to-apples.
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: 0. Checkout the ntes branch
+        uses: actions/checkout@v4
+        with:
+          # Step 6 imports the real NTESAPI client. Steps 1-5 are pure network
+          # probes and do not use any code from this repository.
+          ref: ntes
+
+      - name: 1. Runner identity and egress IP
+        run: |
+          echo "runner: $(uname -a)"
+          echo "egress IP: $(curl -s --max-time 20 https://api.ipify.org)"
+          echo "geo:"
+          curl -s --max-time 20 https://ipinfo.io/json || echo "(ipinfo unavailable)"
+
+      - name: 2. Control - is general egress working at all
+        run: |
+          curl -s -o /dev/null --connect-timeout 10 --max-time 30 \
+            -w "example.com  http=%{http_code} connect=%{time_connect}s total=%{time_total}s\n" \
+            https://example.com || echo "example.com FAILED (runner has no egress)"
+
+      - name: 3. DNS resolution for NTES
+        run: |
+          echo "-- getent ahosts (IPv4 :: IPv6) --"
+          getent ahosts enquiry.indianrail.gov.in || echo "getent: NO RESULT"
+          echo "-- python socket view --"
+          python3 - <<'PY'
+          import socket
+          try:
+              for fam, _, _, _, sockaddr in socket.getaddrinfo(
+                      "enquiry.indianrail.gov.in", 443, proto=socket.IPPROTO_TCP):
+                  print(f"  family={fam} sockaddr={sockaddr}")
+          except Exception as exc:
+              print("  getaddrinfo FAILED:", exc)
+          PY
+
+      - name: 4. TCP connect - IPv4 then IPv6 separately
+        run: |
+          echo "-- forced IPv4 --"
+          curl -4 -s -o /dev/null --connect-timeout 15 --max-time 45 \
+            -w "  ipv4 http=%{http_code} connect=%{time_connect}s total=%{time_total}s\n" \
+            https://enquiry.indianrail.gov.in/mntes/ \
+            || echo "  ipv4 FAILED (packets dropped or filtered)"
+          echo "-- forced IPv6 --"
+          curl -6 -s -o /dev/null --connect-timeout 15 --max-time 45 \
+            -w "  ipv6 http=%{http_code} connect=%{time_connect}s total=%{time_total}s\n" \
+            https://enquiry.indianrail.gov.in/mntes/ \
+            || echo "  ipv6 unavailable/failed"
+
+      - name: 5. Full GET with browser headers - status and body inspection
+        run: |
+          set +e
+          curl -sS -v --connect-timeout 15 --max-time 90 \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9,hi;q=0.8" \
+            https://enquiry.indianrail.gov.in/mntes/ \
+            -o /tmp/ntes.html \
+            -w "\nRESULT http=%{http_code} connect=%{time_connect}s total=%{time_total}s size=%{size_download}\n" \
+            2>&1 | tail -40
+          echo "--- body inspection ---"
+          if [ -s /tmp/ntes.html ]; then
+            wc -c /tmp/ntes.html
+            for marker in "access denied" "request blocked" "too many requests" \
+                          "verify you are human" "cloudflare" "service unavailable" \
+                          "frmTRN"; do
+              if grep -qi "$marker" /tmp/ntes.html; then echo "  FOUND: $marker"; fi
+            done
+            echo "--- first 15 lines ---"
+            head -15 /tmp/ntes.html
+          else
+            echo "  body is EMPTY - the request never returned data"
+          fi
+
+      - name: 6. Exercise the real NTESAPI client from this runner
+        run: |
+          pip install -q -r requirements.txt
+          python3 - <<'PY'
+          import socket, traceback
+          from datetime import date
+          from api.ntes import NTESAPI
+
+          print("default socket timeout:", socket.getdefaulttimeout())
+          api = NTESAPI(timeout=45)
+          today = date.today().isoformat()
+          try:
+              api.get_train_data(11077, today)
+              print("SUCCESS: NTESAPI returned data from the runner")
+          except Exception:
+              print("FAILED: NTESAPI raised -")
+              traceback.print_exc()
+          PY
+
+      - name: 7. Summary hint
+        if: always()
+        run: |
+          echo "=============================================================="
+          echo "How to read this:"
+          echo "  Step 2 fails            -> runner has no egress at all."
+          echo "  Step 3 no result        -> DNS filtering."
+          echo "  Step 4 ipv4 fails       -> NTES/upstream drops this IP."
+          echo "  Step 5 http=200 + EMPTY -> blocked page, inspect markers."
+          echo "  Step 5 no RESULT line   -> connection never completed."
+          echo "Compare against the same commands run from your own machine."
+          echo "=============================================================="
