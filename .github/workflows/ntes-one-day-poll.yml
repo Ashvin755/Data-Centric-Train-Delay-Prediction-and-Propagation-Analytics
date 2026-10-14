@@ -1,0 +1,67 @@
+# One-Day Train Polling - NTES
+#
+# This is the active one-day poller. It runs from THIS repository, but it
+# executes code from the `ntes` branch, not from `main`.
+#
+# Why the split:
+#   GitHub only fires `schedule` / `workflow_dispatch` if the workflow file
+#   exists on the default branch, so this YAML must live on `main`. But
+#   `actions/checkout` accepts an arbitrary ref, so the `ref:` input below
+#   pulls the `ntes` branch instead. Cron fires from `main`; code runs from
+#   `ntes`.
+#
+# Why:
+#   `main` stays frozen at the RailRadar version for open-sourcing as a
+#   research artifact. The RailRadar workflows (multi-day-poll.yml and
+#   one-day-poll.yml) remain on `main` untouched and are disabled in the
+#   Actions UI, which pauses their scheduled runs without deleting anything.
+#
+# Changing variables: the `env:` block below must stay in sync with what
+# run_one_day_poll.py reads on the `ntes` branch. If you rename an
+# environment variable there, update it here too or the run will fail on
+# missing configuration.
+name: One-Day Train Polling (NTES)
+
+on:
+  schedule:
+    # Run every 5 hours (at :00 minutes)
+    - cron: '0 */5 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  poll-one-day-trains:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Runs the NTES implementation. Main keeps the RailRadar version.
+          ref: ntes
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run one-day polling
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          MAX_FLAG_THRESHOLD: ${{ vars.MAX_FLAG_THRESHOLD }}
+          TIMEZONE: Asia/Kolkata
+        run: |
+          python run_one_day_poll.py
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: one-day-logs-${{ github.run_number }}
+          path: logs/one_day_*.log
+          retention-days: 30
