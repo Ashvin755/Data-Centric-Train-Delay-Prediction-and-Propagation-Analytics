@@ -41,14 +41,14 @@
 Delay analytics for Indian Railways is constrained by the absence of a
 reproducible, station-level, machine-learning-ready dataset. This work
 addresses that gap with a data-centric pipeline that was designed, deployed,
-and operated before any predictive modelling was attempted. Scheduled
+and operated before any predictive modeling was attempted. Scheduled
 workflows poll a live train-tracking application programming interface and
 persist station-level scheduled and actual timestamps, together with arrival
 and departure delays, into a cloud relational database using an idempotent,
 fault-aware design with explicit journey lifecycle tracking. Between January
 and June 2026 the pipeline ran continuously for a fixed panel of ten trains
 covering single-day and multi-day services, yielding more than 61{,}000
-unique station-level records. Exploratory analysis shows that delay behaviour
+unique station-level records. Exploratory analysis shows that delay behavior
 is strongly segment-dependent: some adjacent halt pairs persistently add delay
 while others persistently absorb it, suggesting candidate operational differences
 such as congested locations versus segments with recovery margin. This is quantified
@@ -66,7 +66,7 @@ addressed in subsequent work.
 \end{abstract}
 
 \begin{highlights}
-\item Automated pipeline collected over 61,000 station-level delay records
+\item Station-level delay dataset: 61,169 records from 10 trains over five months
 \item Station-pair alpha separates delay-adding from delay-recovery segments
 \item Best next-station model: MAE 4.78 min, RMSE 8.1 min on held-out journeys
 \item Reproducible open data-generation pipeline for Indian Railways
@@ -125,11 +125,10 @@ rather than proven root causes (future work), while the baseline models
 address the second question by benchmarking
 next-station forecasts.
 
-The objectives of this work are to build the collection pipeline, analyse
-persistent delay patterns with the alpha metric, and benchmark delay
-prediction models. This phase delivers continuous collection since January
-2026 with over 61{,}000 station-level records, an interpretable
-segment-level analysis, and benchmarked forecasts.
+This work addresses two questions: where delay accumulates and where it is
+recovered along a route, and how much of the observed delay carries forward to
+the next station. Section~\ref{sec:proposed} states the objectives that follow
+from these questions and the methodology used to address them.
 
 Section~\ref{sec:related} reviews related literature and the research gap,
 and describes the research problem and scope.
@@ -164,11 +163,13 @@ reported machine-learning-based delay prediction with data references to
 online running-status sources, but without an openly shareable benchmark
 dataset accompanying the publication \citep{arshad2019prediction}. More
 recently, the RSTGCN study claimed a nationwide Indian railway delay dataset,
-but at the time of review that dataset was not publicly accessible through
-the links in the study's repository trail, which limits independent
-verification and reuse \citep{chowdhury2025rstgcn}. While high-level
+but at the time of our check in August 2026 that dataset was not publicly
+accessible through the links in the study's repository trail, which limits
+independent verification and reuse \citep{chowdhury2025rstgcn}. While high-level
 operational reports do exist \citep{indian_railways_stats}, model-ready
-station-level traces with continuous open access are still uncommon.
+station-level traces with continuous open access are still uncommon, and the
+collection described in this work is distinguished from released alternatives
+by multi-month continuous collection with journey-lifecycle completeness.
 
 Taken together, the studies above implicitly define the properties that a
 usable delay dataset must satisfy. First, records must be station-level
@@ -228,14 +229,8 @@ collects reliable station-level delay data for selected Indian trains, and
 develops a data analysis framework that reveals persistent station-segment
 delay behavior, quantifies delay accumulation and delay-recovery zones, and
 provides benchmark delay-forecasting baselines for future model enhancement.
-
-Most existing approaches start directly with model training on small, one-off
-data samples. This work takes a different path. It first builds a reliable
-and reusable data foundation with journey tracking, duplicate-safe storage,
-and clear quality checks. This solves the core data problem first, so that
-delay forecasting can later be done on stronger evidence. It also keeps the
-full process traceable, since every stored record links back to a specific
-journey date and polling cycle.
+Every stored record links back to a specific journey date and polling cycle,
+so the full process remains traceable.
 
 \section{System architecture and methodology}
 \label{sec:proposed}
@@ -263,8 +258,8 @@ The implemented system uses a serverless execution model driven by scheduled
 workflows and cloud database storage. Two polling workflows are maintained:
 one for single-day trains and one for multi-day trains, reflecting their
 substantially different journey durations. Each workflow is triggered on a
-fixed cron schedule through GitHub Actions---every 5~h for single-day trains
-and every 12~h for multi-day trains---and executes a dedicated Python
+fixed cron schedule through GitHub Actions, every 5~h for single-day trains
+and every 12~h for multi-day trains, and executes a dedicated Python
 polling script that queries the RailRadar API \citep{railradar_about} and
 persists resulting records to a Supabase PostgreSQL database. Because
 scheduling is external to the application code, collection continues without
@@ -316,7 +311,7 @@ The data model consists of three connected tables. The \texttt{train\_info}
 table stores static metadata for monitored trains, including train name,
 journey type (single-day or multi-day), destination station code, and journey
 duration. The \texttt{journey\_status\_flags} table tracks journey-level
-state---completion, abandonment, and the polling flag count---keyed by a
+state, namely completion, abandonment, and the polling flag count, keyed by a
 unique combination of train number and journey date. The \texttt{rail\_data}
 table stores station-level observations with scheduled and actual arrival and
 departure timestamps and arrival and departure delay fields, keyed by train
@@ -721,7 +716,7 @@ described by the features used so far.
 
 \subsubsection{Time-series trials}
 ARIMA and SARIMA \citep{boxjenkins1976}, Prophet \citep{taylor2018forecasting},
-and Chronos \citep{woo2024chronos} baselines were explored, but their initial
+and Chronos \citep{ansari2024chronos} baselines were explored, but their initial
 outcomes were not adequate for the desired route-pattern capture. The current
 phase therefore treats these as reference baselines rather than final
 predictive claims, and they are retained to document which model families were
@@ -762,7 +757,7 @@ MAE \textbf{4.8} / RMSE \textbf{8.1} \\
 \addlinespace
 Chowdhury et al.\ (RSTGCN) \citep{chowdhury2025rstgcn} &
 Whole IRN, 4{,}735 stations, Sep.\ 2024 &
-Station-hourly average arrival delay, 1\,h horizon &
+Station-hourly average arrival delay; 1--3\,h averaged &
 MAE (h), MAPE (\%), RMSE (h) &
 MAE 0.075\,h ($\approx$4.5\,min); MAPE 9.2\,\%; RMSE $\approx$22.8\,min &
 MAE \textbf{4.8}\,min \\
@@ -779,12 +774,15 @@ split, a tighter target that is not directly rankable against theirs. Arshad
 and Ahmed propose comparing multivariate regression, neural networks, and
 random forest for Indian delay prediction but report no numeric results
 \citep{arshad2019prediction}. RSTGCN predicts station-level hourly average
-arrival delay over 4{,}735 stations, reporting an MAE of 0.075\,h
-(4.5\,min) and MAPE of 9.2\,\% \citep{chowdhury2025rstgcn}; our per-train MAE
+arrival delay over 4{,}735 stations, and reports a mean MAE of 0.075\,h
+(4.5\,min) and a MAPE of 9.2\,\% across 1--3\,h prediction horizons
+\citep{chowdhury2025rstgcn}. Our per-train MAE
 of 4.8\,min is of similar magnitude, although our target is a single train's
-departure delay rather than a spatial average, while RSTGCN's RMSE of about
-22.8\,min is far larger than our 8.1\,min, reflecting the heavier tail of
-station-wide aggregates. Oneto et al., Flier et al., and Goverde
+departure delay rather than a station-hour average over all arriving trains.
+RSTGCN's reported RMSE is larger than ours, about 22.8\,min against
+8.1\,min; the two values are computed over different aggregations and on
+different networks, so we do not read the difference as a difference in model
+quality. Oneto et al., Flier et al., and Goverde
 \citep{oneto2018train,flier2009delay,goverde2010railway} address delay
 distribution and propagation rather than point-forecast accuracy and are
 therefore compared only qualitatively. Consistent with RSTGCN's practice of
