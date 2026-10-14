@@ -231,8 +231,14 @@ In `docs/references.bib` (used by the minor project report via BibTeX):
   `arshad2019prediction` / `chowdhury2025rstgcn` with the corrected
   metadata above, because the report's Chapter 2 cites all three keys.
 - The two placeholder entries `india_survey_example` and
-  `india_simulation_example` (marked "hypothetical reference") were left
-  untouched.
+  `india_simulation_example` (marked "hypothetical reference") have been
+  **removed** from `docs/references.bib` and from the hand-typed
+  `thebibliography` in `docs/paper_ieee.tex`. Crossref lookup on 2026-10-14
+  returned no record for either title; the `.tex` version carried *different*
+  fabricated metadata from the `.bib` version (Mangla & Kumar, Int. J.
+  Logistics Systems and Management; Agrawal & Dhamaniya, Transportation
+  Research Procedia). Both in-text `\cite{}` calls were replaced with
+  `\textcolor{red}{needs citation}` pending real sources.
 
 ---
 
