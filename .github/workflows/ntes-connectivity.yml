@@ -110,11 +110,20 @@ jobs:
           api = NTESAPI(timeout=45)
           today = date.today().isoformat()
           try:
-              api.get_train_data(11077, today)
-              print("SUCCESS: NTESAPI returned data from the runner")
+              result = api.get_train_data(11077, today)
           except Exception:
               print("FAILED: NTESAPI raised -")
               traceback.print_exc()
+          else:
+              # get_train_data() returns None on fetch failure instead of
+              # raising, so a bare call would always look like a success.
+              if result is None:
+                  print("FAILED: NTES unreachable - get_train_data returned None")
+              else:
+                  print(f"REACHED NTES: status={result.get('status')} "
+                        f"route_stops={len(result.get('route', []))}")
+                  if result.get("status") == "not_found":
+                      print("  (reachable, but no journey pane for this train/date)")
           PY
 
       - name: 7. Summary hint
