@@ -85,9 +85,9 @@ Indian Railways operates one of the largest rail networks in the world,
 carrying more than 8 billion passenger journeys annually over approximately
 68{,}000~km of route \citep{indian_railways_stats}, and is correspondingly
 sensitive to delay propagation across stations and routes. A delay introduced
-on one segment is frequently carried forward, amplified, or partially absorbed
-as the service proceeds, affecting rolling-stock reuse, crew and platform
-scheduling, and downstream connectivity. Two services sharing the same
+on one segment is carried forward, amplified, or absorbed as the service
+proceeds. The resulting shortfall constrains rolling-stock reuse, crew and
+platform scheduling, and downstream connectivity. Two services sharing the same
 corridor may therefore end with very different delay profiles, depending on
 the segments traversed and where recovery capacity exists along the route.
 
@@ -179,36 +179,37 @@ observations from different runs of the same service can be aligned and
 compared. Third, the station ordering must be stable across journey dates,
 otherwise segment-level comparisons are not meaningful. Fourth, the
 observation horizon must be long enough to separate persistent effects from
-transient ones. Finally, the collection process should be documented well
-enough to be reproducible, since otherwise reported accuracy figures cannot
-be independently validated.
+transient ones. Finally, the collection process has to be documented well
+enough to reproduce; otherwise the accuracy figures reported from it cannot
+be checked independently.
 
-Most prior work emphasizes prediction models; however, prediction quality is
-strongly data-dependent. In our case, delay forecasting was the intended
-primary objective, but the lack of consistently accessible dataset
-infrastructure became an enabling bottleneck that had to be solved first. The
-literature therefore indicates that data quality, consistency, and
-operational context are prerequisites for robust prediction. Accordingly,
-this phase prioritizes systematic data generation and station-level
-interpretability as a prerequisite stage, with forecasting-performance
-improvement as the downstream target. In particular, this work contributes a
-data-first collection and analysis pipeline for the Indian context and
-introduces an interpretable station-pair alpha indicator for operational
-insight prior to stronger model claims.
+Most prior work concentrates on the prediction model itself. Its accuracy,
+though, depends strongly on the data behind it. Delay forecasting was the
+intended primary objective here, yet the dataset infrastructure needed to do
+it was not consistently available, so building it became the first task. The
+studies above name three prerequisites for reliable prediction: the quality
+and internal consistency of the records, and the operational context carried
+alongside them. This phase therefore treats systematic data generation and
+station-level interpretability as a prerequisite stage, leaving
+forecasting-performance improvement as the downstream target. The contribution
+is a data-first collection and analysis pipeline for the Indian context,
+together with an interpretable station-pair alpha indicator for operational
+insight ahead of stronger model claims.
 
 The primary long-term problem is robust train delay forecasting for Indian
-Railways, especially station-to-station delay propagation and
-arrival-time reliability improvement. In practical execution, however, we
-encountered an enabling problem first: the absence of sufficiently open,
-continuously collected, station-level data needed to train and validate such
-models.
+Railways, and within it the propagation of delay from one station to the next
+along with the reliability of arrival times. What we met first in practice was
+a more elementary obstacle. No sufficiently open, continuously collected,
+station-level data existed from which such models could be trained and
+validated.
 
 Several concrete challenges motivate this formulation. Open historical traces
 that preserve journey-state context are missing from available public
-sources, and reproducible collection pipelines for Indian routes are rarely
-documented publicly. Comparing station behavior across journey dates is
-difficult without a stable station ordering, and baseline models struggle
-without route-aware feature design and normalized preprocessing. Operational
+sources, and collection pipelines for Indian routes are seldom documented
+thoroughly enough to reproduce. Where the station ordering does not stay
+fixed across journey dates, station behavior cannot be compared from one date
+to the next; and without route-aware feature design and normalized
+preprocessing, baseline models remain weak. Operational
 causes of lateness, such as congestion at specific stations or segments,
 cannot be fully attributed from single-train traces alone; concurrent
 multi-train station data are needed to confirm congestion effects. Finally,
@@ -238,35 +239,35 @@ so the full process remains traceable.
 \subsection{Objectives}
 The key objectives of this work are:
 \begin{enumerate}
-    \item to build a scalable, automated, and reproducible pipeline that
-          collects station-level delay data for selected trains;
-    \item to maintain journey lifecycle tracking so that completion and
+    \item to build a reproducible, automated pipeline that scales to collect
+          station-level delay data for selected trains;
+    \item to keep journey lifecycle tracking, so that completion and
           failure context is preserved;
-    \item to perform train-wise exploratory analysis that locates where
-          delay systematically grows or shrinks along a route;
-    \item to quantify station-segment behavior using a robust route-level
-          metric ($\alpha$) as an operational diagnostic for candidate
-          delay-adding and recovery zones;
-    \item to establish baseline delay-prediction models as a reference for
-          future improvements;
-    \item to document the collection methodology so that the dataset and
-          results are reproducible and extensible.
+    \item to run train-wise exploratory analysis that locates where delay
+          systematically grows or shrinks along a route;
+    \item to quantify station-segment behavior with a robust route-level
+          metric ($\alpha$), applied as an operational diagnostic for
+          candidate delay-adding and recovery zones;
+    \item to establish baseline delay-prediction models as a reference
+          point for future improvement;
+    \item to document the collection method, so that the dataset and the
+          results drawn from it are reproducible and can be extended;
 \end{enumerate}
 
 \subsection{System overview}
-The implemented system uses a serverless execution model driven by scheduled
-workflows and cloud database storage. Two polling workflows are maintained:
-one for single-day trains and one for multi-day trains, reflecting their
-substantially different journey durations. Each workflow is triggered on a
-fixed cron schedule through GitHub Actions, every 5~h for single-day trains
-and every 12~h for multi-day trains, and executes a dedicated Python
-polling script that queries the RailRadar API \citep{railradar_about} and
-persists resulting records to a Supabase PostgreSQL database. Because
-scheduling is external to the application code, collection continues without
-manual intervention, and the same scripts can be redeployed locally for
-verification or backfill. Keeping the two service classes on separate
-schedules also ensures that long-distance services are not polled at a
-cadence designed for short commuter runs.
+The implemented system runs on a serverless model, so nothing in the
+application code schedules anything. GitHub Actions fires the polling
+workflows on a cron schedule, and the records they return are written to a
+cloud database. Two workflows are maintained, because a single-day service
+and a multi-day service do not run on the same timescale. The single-day
+workflow fires every 5~h and the multi-day workflow every 12~h, and each runs
+a dedicated Python script. That script queries the RailRadar API
+\citep{railradar_about} and stores what comes back in a Supabase PostgreSQL
+database. With the schedule held outside the application code, nothing has to
+be restarted by hand, and the same scripts can be run locally to verify a
+record or to backfill a gap. Holding the two service classes on separate
+schedules keeps long-distance services off the polling cadence meant for
+short commuter runs.
 Fig.~\ref{fig:arch} shows the overall collection architecture.
 
 \begin{figure}[width=\columnwidth]
@@ -363,12 +364,11 @@ duplicates, so record counts remain meaningful as a measure of collection
 volume.
 
 \subsection{Train panel and collection scope}
-Ten representative trains were selected for continuous monitoring: four
-single-day services and six multi-day services, spanning short commuter routes
-and long-distance corridors. This mix was chosen deliberately so that the
-dataset covers both rapid, high-frequency services and journeys long enough
-to exhibit multi-stage delay accumulation. Table~\ref{tab:trains} lists the
-monitored panel.
+We monitor ten representative trains continuously: four single-day services and
+six multi-day ones, covering both short commuter routes and long-distance
+corridors. The mix was chosen so that the dataset holds rapid, high-frequency
+services and journeys long enough to exhibit multi-stage delay accumulation.
+Table~\ref{tab:trains} lists the monitored panel.
 
 \begin{table}[width=\columnwidth,cols=4,pos=h]
 \caption{Monitored train panel used in the current phase.}
@@ -393,14 +393,13 @@ Train no. & Train name & Type & Dur. (h) \\
 \end{table}
 
 \subsection{Delay variables and journey representation}
-Two primary variables are used throughout the analysis: delay at arrival and
-delay at departure, both measured in minutes. These are combined with the
-scheduled and actual timestamps at each station, which allows delay
-accumulation and recovery to be examined segment by segment rather than only
-as an end-to-end figure.
+The analysis runs on two variables: delay at arrival and delay at departure,
+each measured in minutes. Read against the scheduled and actual timestamps at
+each station, they let delay accumulation and recovery be examined segment by
+segment instead of only as an end-to-end figure.
 
-Journey lifecycle tracking is treated as a first-class part of the data model
-rather than as an afterthought. Instead of collecting raw snapshots alone,
+Journey lifecycle tracking is built into the data model from the start, not
+bolted on afterwards. Instead of collecting raw snapshots alone,
 each journey carries explicit completion and abandonment flags, which enables
 controlled extraction of completed journeys and reduces duplication in
 downstream analysis. This is what allows the analysis to state coverage
@@ -438,18 +437,18 @@ executed in Python notebooks, in the following order:
 Steps one and two are prerequisites rather than analysis: without consistent
 time normalization, the same physical event can be assigned to different
 journey dates, which silently corrupts every later comparison. Step three
-produces the visual evidence on which the alpha hypothesis rests, and steps
-five and six split the work into model-based and indicator-based tracks that
-can be evaluated independently.
+gives the visual evidence that the alpha hypothesis rests on. Steps five and
+six then run as two separate tracks, one model-based and one indicator-based,
+each evaluated on its own.
 
 \subsubsection{From visualization to alpha experimentation}
-The alpha methodology was derived directly from the observed shapes of the
-station-wise delay trends. The analysis formalizes pairwise delay deltas,
-computes the median and mean alpha, and reports ranked outputs, including the
-top-10 delay-adding and top-10 recovery segments. Reporting both a ranked list
-and an explicit coverage ratio for every pair keeps the interpretation
-honest: a large alpha supported by only a few observations is visibly
-distinguished from one supported by the full analysis window.
+We read the alpha methodology off the shapes the station-wise delay traces
+took once they were plotted. From there the analysis formalizes pairwise delay
+deltas, takes the median and mean alpha for each pair, and ranks the segments,
+listing the ten that add the most delay and the ten that recover the most.
+Every pair is reported with a ranked position and an explicit coverage ratio.
+A large alpha resting on a handful of observations is then easy to distinguish
+from one resting on the full analysis window.
 
 \subsection{Station-pair alpha metric}
 To quantify station-segment behavior, $\alpha$ is defined on adjacent
@@ -468,17 +467,17 @@ alpha across the observed journey dates is used as the primary robust
 indicator, with mean alpha computed as a sensitivity check so that outlier
 journeys cannot silently dominate the ranking.
 
-The construction deliberately measures the difference between two adjacent
-departure delays rather than an absolute delay value. This makes the
-indicator independent of how delayed a journey already was when it reached the
-upstream station, so a segment's tendency to add or absorb delay can be
-compared across journeys with very different starting conditions.
+The construction measures a difference between two adjacent departure delays,
+not an absolute delay value. The indicator is therefore independent of how late
+a journey already was on reaching the upstream station. A segment's tendency to
+add or absorb delay can then be compared across journeys that started from
+very different conditions.
 
 \section{Experimental results and analysis}
 \label{sec:results}
 
-Analysis uses the 1 January to 24 May 2026 export, with journey-wise splits
-for evaluation.
+The analysis uses the 1 January to 24 May 2026 export. Splits are made
+journey-wise.
 
 \subsection{Dataset snapshot and preprocessing}
 The collection system ran from January to June 2026 and collected more than
@@ -639,11 +638,12 @@ enter the top-10 delay-adding list in place of RKMP~$\rightarrow$~ODG,
 RKM~$\rightarrow$~AGC, and MTY~$\rightarrow$~PAR, while
 BEAS~$\rightarrow$~JUC enters and BYT~$\rightarrow$~BYL leaves the cover-up
 list under the mean criterion; the dominant pairs retain their positions at
-the top. This indicates that the identified segments are not artifacts of a
-single aggregation choice. The full mean-based rankings and the route-ordered
-alpha profile for the whole route are reproduced in Appendix~\ref{app:alpha}
-and Appendix~\ref{app:mean}, where the coverage ratio is reported alongside
-median and mean values for every adjacent halt pair.
+the top. The identified segments therefore survive a change of
+aggregation, so they are not artifacts of a single choice. The full mean-based
+rankings and the route-ordered alpha profile for the whole route are
+reproduced in Appendix~\ref{app:alpha} and Appendix~\ref{app:mean}, where the
+coverage ratio is reported alongside median and mean values for every adjacent
+halt pair.
 
 Low-coverage pairs were mainly concentrated around sparse route segments (for
 example PAR~$\rightarrow$~NRKR and NRKR~$\rightarrow$~KATL, each observed on
