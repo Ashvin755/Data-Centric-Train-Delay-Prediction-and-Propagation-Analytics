@@ -62,3 +62,8 @@ docs/sati_conference/elsevier/main-v2.toc
 # Figure-regeneration cache (regen_figures.py prepared-frame pickle)
 docs/sati_conference/elsevier/.cache/
 
+docs/paper_ieee.aux
+docs/paper_ieee.log
+docs/paper_ieee.out
+docs/paper_ieee.synctex.gz
+docs/paper_ieee.synctex(busy)
